@@ -1,0 +1,11 @@
+--cpu ARM966E-S
+".\obj\lcd.o"
+".\obj\irq.o"
+".\obj\dashboard.o"
+".\obj\rtx_config.o"
+".\obj\str91x.o"
+C:\Keil\ARM\RV31\LIB\RTX_ARM_L.LIB
+--library_type=microlib --strict --scatter ".\Obj\Dashboard.sct"
+--summary_stderr --info summarysizes --map --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\Lst\Dashboard.map" -o .\Obj\Dashboard.axf
