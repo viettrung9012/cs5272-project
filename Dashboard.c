@@ -145,7 +145,7 @@ int TickFct_Sensor(int state) {
 	  	{
 			if (doorStateChanged && isDoorOpen) { // Open door
 				if (Potentiometer * 5 / 1023 <= 2) {// Outside is dark
-					B3 = B4 = B5 = 1; // LightOn
+					internalLightOn();
           			state = OPEN_ON; // Door open, light on
 					counter = 0; // Start counter
 				} else { // Outside is dark
@@ -159,7 +159,7 @@ int TickFct_Sensor(int state) {
       	case OPEN_ON: // Door open, light on
 		{
 			if (engineStateChanged && isEngineOn){ // Engine starts
-				B3 = B4 = B5 = 0;
+				internalLightOff();
 				state = OPEN_OFF;
 			} else {
 				if (counter <= 100){ // <= 20s
@@ -170,7 +170,7 @@ int TickFct_Sensor(int state) {
 						counter++;
 					}
 				} else { // > 20s
-					B3 = B4 = B5 = 0;
+					internalLightOff();
 					state = OPEN_OFF;
 				}
 			}
@@ -179,7 +179,7 @@ int TickFct_Sensor(int state) {
 		case OPEN_OFF: // Door open, light off
 		{
 			if (doorStateChanged && !isDoorOpen){ // Close door
-				B3 = B4 = B5 = 1;
+				internalLightOn();
 				state = CLOSE_ON;
 				counter = 0;
 			}
@@ -188,14 +188,13 @@ int TickFct_Sensor(int state) {
 		case CLOSE_ON: // Door close, light on
 		{
 			if (engineStateChanged && isEngineOn) { // Engine starts
-				B3 = B4 = B5 = 0;
+				internalLightOff();
 				state = CLOSE_OFF;
 			} else {
 				if (counter <= 50){ // <= 10s
 					counter++;
 				} else {
-					// need a dimOff method
-					B3 = B4 = B5 = 0;
+					internalLightDim();
 					state = CLOSE_OFF;
 				}
 			}
