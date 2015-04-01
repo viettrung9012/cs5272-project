@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Obj\Dashboard.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Obj\Dashboard.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5.03 [Build 76]: Last Updated: Wed Apr 01 15:34:27 2015
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5.03 [Build 76]: Last Updated: Wed Apr 01 15:05:13 2015
 <BR><P>
 <H3>Maximum Stack Usage =         88 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -279,7 +279,11 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[13]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TASK_LCD
 </UL>
 
+<<<<<<< HEAD
 <P><STRONG><a name="[39]"></a>TickFct_Sensor</STRONG> (Thumb, 170 bytes, Stack size 32 bytes, dashboard.o(.text))
+=======
+<P><STRONG><a name="[36]"></a>TickFct_Sensor</STRONG> (Thumb, 172 bytes, Stack size 32 bytes, dashboard.o(.text))
+>>>>>>> refactoring done
 <BR><BR>[Stack]<UL><LI>Max Depth = 60<LI>Call Chain = TickFct_Sensor &rArr; __aeabi_idivmod &rArr; __aeabi_uidivmod
 </UL>
 <BR>[Calls]<UL><LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__ARM_common_switch8 (via BLX)
@@ -307,8 +311,13 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> dashboard.o(.text)
 </UL>
+<<<<<<< HEAD
 <P><STRONG><a name="[13]"></a>TASK_LCD</STRONG> (Thumb, 114 bytes, Stack size 0 bytes, dashboard.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 80<LI>Call Chain = TASK_LCD &rArr; print_sensors &rArr; os_mbx_wait &rArr; os_dispatch &rArr; os_put_prio
+=======
+<P><STRONG><a name="[13]"></a>TASK_LCD</STRONG> (Thumb, 116 bytes, Stack size 0 bytes, dashboard.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 68<LI>Call Chain = TASK_LCD &rArr; print_sensors &rArr; LCD_cls &rArr; LCD_gotoxy &rArr; lcd_wr_cmd &rArr; lcd_wait_busy
+>>>>>>> refactoring done
 </UL>
 <BR>[Calls]<UL><LI><a href="#[41]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_itv_wait
 <LI><a href="#[40]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_itv_set
@@ -321,7 +330,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> dashboard.o(.text)
 </UL>
-<P><STRONG><a name="[11]"></a>TASK_PWM</STRONG> (Thumb, 66 bytes, Stack size 0 bytes, dashboard.o(.text))
+<P><STRONG><a name="[11]"></a>TASK_PWM</STRONG> (Thumb, 68 bytes, Stack size 0 bytes, dashboard.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 28<LI>Call Chain = TASK_PWM &rArr; os_itv_wait &rArr; os_block &rArr; os_put_dly
 </UL>
 <BR>[Calls]<UL><LI><a href="#[41]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_itv_wait
@@ -330,7 +339,11 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> dashboard.o(.text)
 </UL>
+<<<<<<< HEAD
 <P><STRONG><a name="[10]"></a>TASK_SENSOR</STRONG> (Thumb, 154 bytes, Stack size 0 bytes, dashboard.o(.text))
+=======
+<P><STRONG><a name="[10]"></a>TASK_SENSOR</STRONG> (Thumb, 48 bytes, Stack size 0 bytes, dashboard.o(.text))
+>>>>>>> refactoring done
 <BR><BR>[Stack]<UL><LI>Max Depth = 60<LI>Call Chain = TASK_SENSOR &rArr; TickFct_Sensor &rArr; __aeabi_idivmod &rArr; __aeabi_uidivmod
 </UL>
 <BR>[Calls]<UL><LI><a href="#[41]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_itv_wait
@@ -343,7 +356,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> dashboard.o(.text)
 </UL>
-<P><STRONG><a name="[f]"></a>ADC_Con</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, dashboard.o(.text))
+<P><STRONG><a name="[f]"></a>ADC_Con</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, dashboard.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 28<LI>Call Chain = ADC_Con &rArr; os_itv_wait &rArr; os_block &rArr; os_put_dly
 </UL>
 <BR>[Calls]<UL><LI><a href="#[41]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_itv_wait
@@ -426,7 +439,12 @@ Global Symbols
 <P><STRONG><a name="[31]"></a>__aeabi_uidivmod</STRONG> (Thumb, 44 bytes, Stack size 12 bytes, uidiv.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = __aeabi_uidivmod
 </UL>
+<<<<<<< HEAD
 <BR>[Called By]<UL><LI><a href="#[35]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;print_uns_char
+=======
+<BR>[Called By]<UL><LI><a href="#[33]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;print_uns_char
+<LI><a href="#[42]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;update_brightness
+>>>>>>> refactoring done
 <LI><a href="#[30]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LCD_bargraph
 <LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_printf_core
 <LI><a href="#[3b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_idivmod
@@ -820,10 +838,18 @@ Local Symbols
 <LI><a href="#[25]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LCD_putc
 </UL>
 
+<<<<<<< HEAD
 <P><STRONG><a name="[45]"></a>update_brightness</STRONG> (Thumb, 56 bytes, Stack size 8 bytes, dashboard.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 36<LI>Call Chain = update_brightness &rArr; __aeabi_idivmod &rArr; __aeabi_uidivmod
 </UL>
 <BR>[Calls]<UL><LI><a href="#[3b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_idivmod
+=======
+<P><STRONG><a name="[42]"></a>update_brightness</STRONG> (Thumb, 62 bytes, Stack size 8 bytes, dashboard.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 36<LI>Call Chain = update_brightness &rArr; __aeabi_idivmod &rArr; __aeabi_uidivmod
+</UL>
+<BR>[Calls]<UL><LI><a href="#[38]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_idivmod
+<LI><a href="#[31]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_uidivmod
+>>>>>>> refactoring done
 </UL>
 <BR>[Called By]<UL><LI><a href="#[10]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TASK_SENSOR
 </UL>
