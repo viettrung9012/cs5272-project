@@ -132,8 +132,70 @@ void print_sensors(){
 	LCD_puts(pm);
 	LCD_cur_off ();
 }
+enum CAR_States { CLOSE_OFF, OPEN_ON, OPEN_OFF, CLOSE_ON} CAR_State;
+
 int TickFct_Sensor(int state) {
-	return state;
+	switch(state) { // Transitions
+      	case -1:
+			state = CLOSE_OFF;				 
+     		break;
+	  	case CLOSE_OFF: // Door close, light off
+	  	{
+			if (doorStateChanged && (Potentiometer * 5 / 1023) <= 2 ) { // Open door
+				if (Potentiometer * 5 / 1023 <= 2) {// Outside is dark
+					B4 = B5 = B6 = 1; // LightOn
+          			state = OPEN_ON; // Door open, light on
+					counter = 0; // Start counter
+				} else { // Outside is dark
+					state = OPEN_OFF;
+				}
+        	}
+			else // Nothing happens
+				state = CLOSE_OFF;
+			break;
+		}
+      	case OPEN_ON: // Door open, light on
+		{
+			if (counter <= 100){ // <= 20s
+				if (doorStateChanged){ // Close door
+					state = CLOSE_ON;
+					counter = 0;
+				} else {
+					counter++;
+				}
+			} else { // > 20s
+				B4 = B5 = B6 = 0;
+				state = OPEN_OFF;
+			}
+			break;
+		}
+		case OPEN_OFF: // Door open, light off
+		{
+			if (doorStateChanged){ // Close door
+				B4 = B5 = B6 = 1;
+				state = CLOSE_ON
+				counter = 0;
+			}
+			break;
+		}
+		case CLOSE_ON: // Door close, light on
+		{
+			if (counter <= 50){ // <= 10s
+				counter++;
+			} else {
+				// need a dimOff method
+				B4 = B5 = B6 = 0;
+				state = CLOSE_OFF;
+			}
+			break;
+		}
+      default:
+         state = -1; break;
+      } // Transitions
+   	CAR_State = state;
+   	return state;
+	//print_slider();
+	//return state;
 }
 static void update_brightness(){
 	headlight_brightness = (1023 - Potentiometer) * 5 / 1023;
