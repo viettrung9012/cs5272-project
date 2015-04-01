@@ -3,117 +3,95 @@
 <pre>
 <h1>µVision Build Log</h1>
 <h2>Project:</h2>
-C:\Users\John Goh\Desktop\CS5274\Assignments\git\cs5272-project\Dashboard.uvproj
+C:\Users\Lewis\Documents\GitHub\cs5272-project\Dashboard.uvproj
 Project File Date:  04/01/2015
 
 <h2>Output:</h2>
 Build target 'MCBSTR9'
-compiling Dashboard.c...
-Dashboard.c(27): warning:  #188-D: enumerated type mixed with another type
-  bool isAlarmOn = 0;
-Dashboard.c(28): warning:  #188-D: enumerated type mixed with another type
-  bool isDoorOpen = 0;
-Dashboard.c(29): warning:  #188-D: enumerated type mixed with another type
-  bool isEngineOn = 0;
-Dashboard.c(30): warning:  #188-D: enumerated type mixed with another type
-  bool doorStateChanged = 0;
-Dashboard.c(31): warning:  #188-D: enumerated type mixed with another type
-  bool engineStateChanged = 0;
-Dashboard.c(36): warning:  #188-D: enumerated type mixed with another type
-  bool isInternalLightDimming = 0;
-Dashboard.c(50): warning:  #188-D: enumerated type mixed with another type
-        engineStateChanged = doorStateChanged = 0;
-Dashboard.c(53): warning:  #188-D: enumerated type mixed with another type
-                doorStateChanged = 1;
-Dashboard.c(54): warning:  #188-D: enumerated type mixed with another type
-                isDoorOpen = !isDoorOpen;
-Dashboard.c(57): warning:  #188-D: enumerated type mixed with another type
-                engineStateChanged = 1;         
-Dashboard.c(58): warning:  #188-D: enumerated type mixed with another type
-                isEngineOn = !isEngineOn;
-Dashboard.c(123): warning:  #188-D: enumerated type mixed with another type
-        isInternalLightDimming = 0;
-Dashboard.c(127): warning:  #188-D: enumerated type mixed with another type
-        isInternalLightDimming = 0;
-Dashboard.c(131): warning:  #188-D: enumerated type mixed with another type
-        isInternalLightDimming = 1;
-Dashboard.c(140): warning:  #223-D: function "sprintf" declared implicitly
-        sprintf(ss,"%d",SlideSensor);
-Dashboard.c(145): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "U8 *"
-        LCD_puts(ss);
-Dashboard.c(148): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "U8 *"
-        LCD_puts(pm);
-Dashboard.c(136): warning:  #177-D: variable "x" was declared but never referenced
-        int x = SlideSensor;
-Dashboard.c(137): warning:  #177-D: variable "y" was declared but never referenced
-        int y = Potentiometer;
-Dashboard.c(220): warning:  #188-D: enumerated type mixed with another type
-        CAR_State = state;
-Dashboard.c(245): warning:  #188-D: enumerated type mixed with another type
-                                isAlarmOn = 0;
-Dashboard.c(248): warning:  #188-D: enumerated type mixed with another type
-                                isAlarmOn = 0;
-Dashboard.c(258): warning:  #188-D: enumerated type mixed with another type
-                                isAlarmOn = 1;
-Dashboard.c(268): warning:  #188-D: enumerated type mixed with another type
-                                isAlarmOn = 1;
-Dashboard.c(275): warning:  #188-D: enumerated type mixed with another type
-        ENGINE_State = state;
-Dashboard.c(285): warning:  #188-D: enumerated type mixed with another type
-                if(internal_brightness == 0) isInternalLightDimming = 0; 
-Dashboard.c(293): warning:  #188-D: enumerated type mixed with another type
-        bool b = 0;
-Dashboard.c(296): warning:  #188-D: enumerated type mixed with another type
-                b = !b;
-Dashboard.c(309): warning:  #188-D: enumerated type mixed with another type
-        bool isLCDused = 0;
-Dashboard.c(314): warning:  #188-D: enumerated type mixed with another type
-                        isLCDused = 1;
-Dashboard.c(317): warning:  #188-D: enumerated type mixed with another type
-                                isLCDused = 0;
-Dashboard.c(326): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "U8 *"
-                        LCD_puts((isEngineOn)?"on":"off");
-Dashboard.c(329): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "U8 *"
-                        LCD_puts((isDoorOpen)?"opened":"closed");
-Dashboard.c(459): warning:  #1-D: last line of file ends without a newline
-   *---------------------------------------------------------------------------*/
-Dashboard.c: 34 warnings, 0 errors
 linking...
-Program Size: Code=6288 RO-data=132 RW-data=104 ZI-data=12440  
-".\Obj\Dashboard.axf" - 0 Error(s), 34 Warning(s).
-Load "C:\\Users\\John Goh\\Desktop\\CS5274\\Assignments\\git\\cs5272-project\\Obj\\Dashboard.axf" 
+Program Size: Code=6772 RO-data=132 RW-data=124 ZI-data=12660  
+".\Obj\Dashboard.axf" - 0 Error(s), 0 Warning(s).
+Load "C:\\Users\\Lewis\\Documents\\GitHub\\cs5272-project\\Obj\\Dashboard.axf" 
 Erase Done.
 Programming Done.
 Verify OK.
 Application running ...
-ashboard.c(294): warning:  #188-D: enumerated type mixed with another type
+xed with another type
+  bool isEngineOn = 0;
+Dashboard.c(49): warning:  #188-D: enumerated type mixed with another type
+  bool doorStateChanged = 0;
+Dashboard.c(50): warning:  #188-D: enumerated type mixed with another type
+  bool engineStateChanged = 0;
+Dashboard.c(55): warning:  #188-D: enumerated type mixed with another type
+  bool isInternalLightDimming = 0;
+Dashboard.c(69): warning:  #188-D: enumerated type mixed with another type
+        engineStateChanged = doorStateChanged = 0;
+Dashboard.c(72): warning:  #188-D: enumerated type mixed with another type
+                doorStateChanged = 1;
+Dashboard.c(73): warning:  #188-D: enumerated type mixed with another type
+                isDoorOpen = !isDoorOpen;
+Dashboard.c(76): warning:  #188-D: enumerated type mixed with another type
+                engineStateChanged = 1;         
+Dashboard.c(77): warning:  #188-D: enumerated type mixed with another type
+                isEngineOn = !isEngineOn;
+Dashboard.c(143): warning:  #188-D: enumerated type mixed with another type
+        isInternalLightDimming = 0;
+Dashboard.c(147): warning:  #188-D: enumerated type mixed with another type
+        isInternalLightDimming = 0;
+Dashboard.c(151): warning:  #188-D: enumerated type mixed with another type
+        isInternalLightDimming = 1;
+Dashboard.c(164): warning:  #223-D: function "sprintf" declared implicitly
+        sprintf(ss,"%d",(U32)rptr[1]);
+Dashboard.c(171): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "U8 *"
+        LCD_puts(ss);
+Dashboard.c(174): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "U8 *"
+        LCD_puts(pm);
+Dashboard.c(156): warning:  #550-D: variable "val" was set but never used
+        U32 *rptr, val[2];
+Dashboard.c(246): warning:  #188-D: enumerated type mixed with another type
+        CAR_State = state;
+Dashboard.c(271): warning:  #188-D: enumerated type mixed with another type
+                                isAlarmOn = 0;
+Dashboard.c(274): warning:  #188-D: enumerated type mixed with another type
+                                isAlarmOn = 0;
+Dashboard.c(284): warning:  #188-D: enumerated type mixed with another type
+                                isAlarmOn = 1;
+Dashboard.c(294): warning:  #188-D: enumerated type mixed with another type
+                                isAlarmOn = 1;
+Dashboard.c(301): warning:  #188-D: enumerated type mixed with another type
+        ENGINE_State = state;
+Dashboard.c(311): warning:  #188-D: enumerated type mixed with another type
+                if(internal_brightness == 0) isInternalLightDimming = 0; 
+Dashboard.c(319): warning:  #188-D: enumerated type mixed with another type
+        bool b = 0;
+Dashboard.c(322): warning:  #188-D: enumerated type mixed with another type
                 b = !b;
-Dashboard.c(307): warning:  #188-D: enumerated type mixed with another type
+Dashboard.c(335): warning:  #188-D: enumerated type mixed with another type
         bool isLCDused = 0;
-Dashboard.c(312): warning:  #188-D: enumerated type mixed with another type
+Dashboard.c(340): warning:  #188-D: enumerated type mixed with another type
                         isLCDused = 1;
-Dashboard.c(315): warning:  #188-D: enumerated type mixed with another type
+Dashboard.c(343): warning:  #188-D: enumerated type mixed with another type
                                 isLCDused = 0;
-Dashboard.c(324): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "U8 *"
+Dashboard.c(352): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "U8 *"
                         LCD_puts((isEngineOn)?"on":"off");
-Dashboard.c(327): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "U8 *"
+Dashboard.c(355): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "U8 *"
                         LCD_puts((isDoorOpen)?"opened":"closed");
-Dashboard.c(457): warning:  #1-D: last line of file ends without a newline
+Dashboard.c(399): warning:  #177-D: variable "mptr" was declared but never referenced
+        U32 *mptr;
+Dashboard.c(483): warning:  #1-D: last line of file ends without a newline
    *---------------------------------------------------------------------------*/
-Dashboard.c: 40 warnings, 3 errors
-".\Obj\Dashboard.axf" - 3 Error(s), 40 Warning(s).
-Target not created
-sLCDused = 0;
-Dashboard.c(312): warning:  #188-D: enumerated type mixed with another type
-                        isLCDused = 1;
-Dashboard.c(315): warning:  #188-D: enumerated type mixed with another type
-                                isLCDused = 0;
-Dashboard.c(324): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "U8 *"
-                        LCD_puts((isEngineOn)?"on":"off");
-Dashboard.c(327): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "U8 *"
-                        LCD_puts((isDoorOpen)?"opened":"closed");
-Dashboard.c(457): warning:  #1-D: last line of file ends without a newline
+Dashboard.c: 34 warnings, 0 errors
+linking...
+Program Size: Code=6772 RO-data=132 RW-data=124 ZI-data=12660  
+".\Obj\Dashboard.axf" - 0 Error(s), 34 Warning(s).
+Load "C:\\Users\\Lewis\\Documents\\GitHub\\cs5272-project\\Obj\\Dashboard.axf" 
+Erase Done.
+Programming Done.
+Verify OK.
+Application running ...
+;
+Dashboard.c(484): warning:  #1-D: last line of file ends without a newline
    *---------------------------------------------------------------------------*/
-Dashboard.c: 40 warnings, 9 errors
-".\Obj\Dashboard.axf" - 9 Error(s), 40 Warning(s).
+Dashboard.c: 34 warnings, 3 errors
+".\Obj\Dashboard.axf" - 3 Error(s), 34 Warning(s).
 Target not created

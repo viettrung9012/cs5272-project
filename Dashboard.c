@@ -18,6 +18,8 @@ extern __irq void ADC_IRQ_Handler (void); /* ADC  interrupt routine           */
 extern unsigned char AD_in_progress;      /* AD conversion in progress flag  */
 extern short Potentiometer;
 extern short SlideSensor;
+extern OS_MBX MailBox;
+extern U32 mpool;
 
 unsigned char A0,A1; //A0 - Button 3.5, A1 - Button 3.6
 unsigned char B0 = 0,B1 = 0,B2 = 0,B3 = 0,B4 = 0,B5 = 0,B6 = 0,B7 = 0; //B0-B7 represent LED's 0 through 7
@@ -85,8 +87,9 @@ void start_ADC ( )
 	{             						    /* If conversion not in progress      */
         AD_in_progress = 1;                 /* Flag that AD conversion is started */
         ADC->CR |= 0x0423;                  /* Set STR bit (Start Conversion)     */
-    }
+  }
 	//Now the interrupt will be called when conversion ends
+	
 }
 
 void read_input()
@@ -150,12 +153,18 @@ void internalLightDim(){
 
 
 void print_sensors(){
-	int x = SlideSensor;
-	int y = Potentiometer;
+	U32 *rptr, val[2];
 	char ss[5];
 	char pm[5];
+	
+	os_mbx_wait (MailBox, (void**) &rptr, 0xffff);
+	val[0] = rptr[0];
+	val[1] = rptr[1];
+	
+	sprintf(ss,"%d",(U32)rptr[1]);
+	sprintf(pm,"%d",(U32)rptr[0]);
 	sprintf(ss,"%d",SlideSensor);
-	sprintf(pm,"%d",Potentiometer);
+	sprintf(pm,"%d", Potentiometer);
 	LCD_on(); // Turn on LCD
 	LCD_cls();
 	LCD_puts("Speed: ");
@@ -387,14 +396,15 @@ __task void TASK_SENSOR(void) {
  *---------------------------------------------------------------------------*/
 __task void ADC_Con(void){
   // timing
+	U32 *mptr;
 	const unsigned int period = 100;
 	os_itv_set(period);	
 		for(;;){ 
-		os_itv_wait();
-		/* Do actions below */
-		start_ADC();
+			os_itv_wait();
+			/* Do actions below */
+			start_ADC();
 		}
-}	 // End ADC_Con(void)
+}	 // End ADC_Con(void
 
 
 /*----------------------------------------------------------------------------

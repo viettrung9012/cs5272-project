@@ -13,20 +13,22 @@
 
 
 short Potentiometer,SlideSensor;
-
+os_mbx_declare (MailBox, 16);
+U32 mpool[16*(2*sizeof(U32))/4 + 3]; 
 
 unsigned char AD_in_progress;           /* AD conversion in progress flag     */
 
 __irq void ADC_IRQ_Handler (void) {     /* AD converter interrupt routine     */
-
- 
+	U32 *mptr;
+	
 	Potentiometer = ADC->DR0 & 0x03FF;    /* AD value for global usage (10 bit) */	
-	
-
-	
 	SlideSensor = ADC->DR1 & 0x03FF;          /* AD value for global usage (10 bit) */	//dr4.1
-	
-	
+
+	os_mbx_init(MailBox, sizeof (MailBox));
+	mptr = _alloc_box (mpool);
+	mptr[0] = Potentiometer;
+	mptr[1] = SlideSensor;
+	os_mbx_send (MailBox, mptr, 0xffff);
 	
   ADC->CR &= 0xFFFE;                    /* Clear STR bit (Start Conversion)   */
   ADC->CR &= 0x7FFF;                    /* Clear End of Conversion flag       */
