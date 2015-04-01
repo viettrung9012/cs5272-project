@@ -3,10 +3,67 @@
 <pre>
 <h1>µVision Build Log</h1>
 <h2>Project:</h2>
-C:\Users\Sony\Desktop\IVLE (Arctic Drive)\CS5272 Embedded Software Design\Assignments\Project_Template\Dashboard.uvproj
-Project File Date:  03/19/2014
+C:\Users\John Goh\Desktop\CS5274\Assignments\git\cs5272-project\Dashboard.uvproj
+Project File Date:  04/01/2015
 
 <h2>Output:</h2>
-</pre>
-</body>
-</html>
+Build target 'MCBSTR9'
+compiling Dashboard.c...
+Dashboard.c(27): warning:  #188-D: enumerated type mixed with another type
+  bool isAlarmOn = 1;
+Dashboard.c(28): warning:  #188-D: enumerated type mixed with another type
+  bool isDoorOpen = 0;
+Dashboard.c(29): warning:  #188-D: enumerated type mixed with another type
+  bool isEngineOn = 0;
+Dashboard.c(30): warning:  #188-D: enumerated type mixed with another type
+  bool doorStateChanged = 0;
+Dashboard.c(31): warning:  #188-D: enumerated type mixed with another type
+  bool engineStateChanged = 0;
+Dashboard.c(47): warning:  #188-D: enumerated type mixed with another type
+        engineStateChanged = doorStateChanged = 0;
+Dashboard.c(50): warning:  #188-D: enumerated type mixed with another type
+                doorStateChanged = 1;
+Dashboard.c(51): warning:  #188-D: enumerated type mixed with another type
+                isDoorOpen = !isDoorOpen;
+Dashboard.c(54): warning:  #188-D: enumerated type mixed with another type
+                engineStateChanged = 1;         
+Dashboard.c(55): warning:  #188-D: enumerated type mixed with another type
+                isEngineOn = !isEngineOn;
+Dashboard.c(124): warning:  #223-D: function "sprintf" declared implicitly
+        sprintf(ss,"%d",SlideSensor);
+Dashboard.c(129): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "U8 *"
+        LCD_puts(ss);
+Dashboard.c(132): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "U8 *"
+        LCD_puts(pm);
+Dashboard.c(120): warning:  #177-D: variable "x" was declared but never referenced
+        int x = SlideSensor;
+Dashboard.c(121): warning:  #177-D: variable "y" was declared but never referenced
+        int y = Potentiometer;
+Dashboard.c(146): warning:  #188-D: enumerated type mixed with another type
+        bool b = 0;
+Dashboard.c(149): warning:  #188-D: enumerated type mixed with another type
+                b = !b;
+Dashboard.c(162): warning:  #188-D: enumerated type mixed with another type
+        bool isLCDused = 0;
+Dashboard.c(167): warning:  #188-D: enumerated type mixed with another type
+                        isLCDused = 1;
+Dashboard.c(170): warning:  #188-D: enumerated type mixed with another type
+                                isLCDused = 0;
+Dashboard.c(179): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "U8 *"
+                        LCD_puts((isEngineOn)?"on":"off");
+Dashboard.c(182): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "U8 *"
+                        LCD_puts((isDoorOpen)?"opened":"closed");
+Dashboard.c: 22 warnings, 0 errors
+linking...
+Program Size: Code=5872 RO-data=132 RW-data=100 ZI-data=12436  
+".\Obj\Dashboard.axf" - 0 Error(s), 22 Warning(s).
+Load "C:\\Users\\John Goh\\Desktop\\CS5274\\Assignments\\git\\cs5272-project\\Obj\\Dashboard.axf" 
+Erase Done.
+Programming Done.
+Verify OK.
+Application running ...
+Load "C:\\Users\\John Goh\\Desktop\\CS5274\\Assignments\\git\\cs5272-project\\Obj\\Dashboard.axf" 
+Erase Done.
+Programming Done.
+Verify OK.
+Application running ...

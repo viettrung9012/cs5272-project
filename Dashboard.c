@@ -25,6 +25,13 @@ unsigned char B0 = 0,B1 = 0,B2 = 0,B3 = 0,B4 = 0,B5 = 0,B6 = 0,B7 = 0; //B0-B7 r
 
 unsigned short headlight_brightness,internal_brightness;
 bool isAlarmOn = 1;
+bool isDoorOpen = 0;
+bool isEngineOn = 0;
+bool doorStateChanged = 0;
+bool engineStateChanged = 0;
+
+unsigned char wasAOpressed = 0;
+unsigned char wasA1pressed = 0;
 
 unsigned int i, counter;
 unsigned char SENSOR = 0;
@@ -36,7 +43,20 @@ void read_buttons()
 	A0 = !(GPIO3->DR[0x080]>>5); // Returns 1 when pressed and 0 when released
 	//BUTTON_3_6:
 	A1 = !(GPIO3->DR[0x100]>>6); // Returns 1 when pressed and 0 when released
-
+	
+	engineStateChanged = doorStateChanged = 0;
+	
+	if(wasAOpressed == 1 && A0 == 0){
+		doorStateChanged = 1;
+		isDoorOpen = !isDoorOpen;
+	}
+	if(wasA1pressed == 1 && A1 == 0){
+		engineStateChanged = 1;		
+		isEngineOn = !isEngineOn;
+	}
+	
+	wasAOpressed = A0;
+	wasA1pressed = A1;
 }
 
 void start_ADC ( )
@@ -93,9 +113,10 @@ void print_uns_char (unsigned char value)
 OS_TID Car_controller_id; // Declare variable t_Lighting to store the task id
 OS_TID PWM_controller_id; // Declare variable t_Lighting to store the task id
 OS_TID Alarm_controller_id; // Declare variable t_Lighting to store the task id
+OS_TID LCD_controller_id; // Declare variable t_Lighting to store the task id
 enum SENSOR_States { TAP_OFF, TAP_ON} SENSOR_State;
 
-void print_slider(){
+void print_sensors(){
 	int x = SlideSensor;
 	int y = Potentiometer;
 	char ss[5];
@@ -115,7 +136,6 @@ void print_slider(){
 	internal_brightness = SlideSensor * 6 / 550;
 }
 int TickFct_Sensor(int state) {
-	print_slider();
 	return state;
 }
 static void update_led(int pulse_state){
@@ -130,10 +150,45 @@ __task void TASK_Alarm(void) {
 		if(isAlarmOn){
 			B6 = (b)?1:0;
 			B7 = (b)?0:1;
+		}else{
+			B6 = B7 = 0;
 		}
 		os_itv_wait();
 	}
 }
+__task void TASK_LCD(void) {
+	const unsigned int taskperiod = 100; // Copy task period value in milliseconds here
+  unsigned int LCDcounter = 0;
+	bool isLCDused = 0;
+  os_itv_set(taskperiod);
+	while(1){
+		if(doorStateChanged || engineStateChanged){
+			LCDcounter = 0;
+			isLCDused = 1;
+		}else if(isLCDused){
+			if(LCDcounter > 10){
+				isLCDused = 0;
+			}else{
+				LCDcounter++;
+			}
+		}
+		if(isLCDused){
+			LCD_on(); // Turn on LCD
+			LCD_cls();
+			LCD_puts("Engine is ");
+			LCD_puts((isEngineOn)?"on":"off");
+			LCD_gotoxy(1,2);  // switch to the second line
+			LCD_puts("Door is ");
+			LCD_puts((isDoorOpen)?"opened":"closed");
+			LCD_cur_off ();
+		}else{
+			print_sensors();
+		}
+		os_itv_wait();
+   } // while (1)
+}
+
+
 __task void TASK_PWM(void) {
   int pulse_state = 0;
   int pulse_states = 6;
@@ -154,6 +209,7 @@ __task void TASK_SENSOR(void) {
 	
 	while(1){
 		read_input();
+		read_buttons();
 		state = TickFct_Sensor(state);
 		os_itv_wait();
    } // while (1)
@@ -233,6 +289,7 @@ __task void init (void) {
   Car_controller_id = os_tsk_create(TASK_SENSOR,0);
   PWM_controller_id = os_tsk_create(TASK_PWM,1);
   Alarm_controller_id = os_tsk_create(TASK_Alarm,1);
+  LCD_controller_id = os_tsk_create(TASK_LCD,1);
   
   os_tsk_delete_self ();
 }
