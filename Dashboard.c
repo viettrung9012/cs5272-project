@@ -33,6 +33,9 @@ bool engineStateChanged = 0;
 unsigned char wasAOpressed = 0;
 unsigned char wasA1pressed = 0;
 
+bool isInternalLightDimming = 0;
+unsigned int internalLightDimCounter = 0;
+
 unsigned int i, counter;
 unsigned char SENSOR = 0;
 
@@ -114,7 +117,6 @@ OS_TID Car_controller_id; // Declare variable t_Lighting to store the task id
 OS_TID PWM_controller_id; // Declare variable t_Lighting to store the task id
 OS_TID Alarm_controller_id; // Declare variable t_Lighting to store the task id
 OS_TID LCD_controller_id; // Declare variable t_Lighting to store the task id
-enum SENSOR_States { TAP_OFF, TAP_ON} SENSOR_State;
 
 void print_sensors(){
 	int x = SlideSensor;
@@ -197,13 +199,28 @@ int TickFct_Sensor(int state) {
 	//print_slider();
 	//return state;
 }
+void internalLightOn(){
+	internal_brightness = 5;
+	isInternalLightDimming = 0;
+}
+void internalLightOff(){
+	internal_brightness = 0;
+	isInternalLightDimming = 0;
+}
+void internalLightDim(){	
+	internalLightDimCounter = 0;
+	isInternalLightDimming = 1;
+}
 static void update_brightness(){
 	headlight_brightness = (1023 - Potentiometer) * 5 / 1023;
-	internal_brightness = SlideSensor * 6 / 550;
+	if(isInternalLightDimming && ++internalLightDimCounter %2 == 0){ //Every 0.4 seconds
+		internal_brightness --;
+		if(internal_brightness == 0) isInternalLightDimming = 0; 
+	}
 }
 static void update_led(int pulse_state){
 	B0 = B1 = B2 = (headlight_brightness > pulse_state)? 1:0;
-	//B3 = B4 = B5 = (internal_brightness > pulse_state)? 1:0;	
+	B3 = B4 = B5 = (internal_brightness > pulse_state)? 1:0;	
 }
 __task void TASK_Alarm(void) {
 	bool b = 0;
