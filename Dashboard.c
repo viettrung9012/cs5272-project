@@ -134,8 +134,8 @@ void print_sensors(){
 	LCD_puts(pm);
 	LCD_cur_off ();
 }
-enum CAR_States { CLOSE_OFF, OPEN_ON, OPEN_OFF, CLOSE_ON} CAR_State;
 
+enum CAR_States { CLOSE_OFF, OPEN_ON, OPEN_OFF, CLOSE_ON} CAR_State;
 int TickFct_Sensor(int state) {
 	switch(state) { // Transitions
       	case -1:
@@ -143,7 +143,7 @@ int TickFct_Sensor(int state) {
      		break;
 	  	case CLOSE_OFF: // Door close, light off
 	  	{
-			if (doorStateChanged) { // Open door
+			if (doorStateChanged && isDoorOpen) { // Open door
 				if (Potentiometer * 5 / 1023 <= 2) {// Outside is dark
 					B3 = B4 = B5 = 1; // LightOn
           			state = OPEN_ON; // Door open, light on
@@ -158,22 +158,27 @@ int TickFct_Sensor(int state) {
 		}
       	case OPEN_ON: // Door open, light on
 		{
-			if (counter <= 100){ // <= 20s
-				if (doorStateChanged){ // Close door
-					state = CLOSE_ON;
-					counter = 0;
-				} else {
-					counter++;
-				}
-			} else { // > 20s
+			if (engineStateChanged && isEngineOn){ // Engine starts
 				B3 = B4 = B5 = 0;
 				state = OPEN_OFF;
+			} else {
+				if (counter <= 100){ // <= 20s
+					if (doorStateChanged && !isDoorOpen){ // Close door
+						state = CLOSE_ON;
+						counter = 0;
+					} else {
+						counter++;
+					}
+				} else { // > 20s
+					B3 = B4 = B5 = 0;
+					state = OPEN_OFF;
+				}
 			}
 			break;
 		}
 		case OPEN_OFF: // Door open, light off
 		{
-			if (doorStateChanged){ // Close door
+			if (doorStateChanged && !isDoorOpen){ // Close door
 				B3 = B4 = B5 = 1;
 				state = CLOSE_ON;
 				counter = 0;
@@ -182,12 +187,17 @@ int TickFct_Sensor(int state) {
 		}
 		case CLOSE_ON: // Door close, light on
 		{
-			if (counter <= 50){ // <= 10s
-				counter++;
-			} else {
-				// need a dimOff method
+			if (engineStateChanged && isEngineOn) { // Engine starts
 				B3 = B4 = B5 = 0;
 				state = CLOSE_OFF;
+			} else {
+				if (counter <= 50){ // <= 10s
+					counter++;
+				} else {
+					// need a dimOff method
+					B3 = B4 = B5 = 0;
+					state = CLOSE_OFF;
+				}
 			}
 			break;
 		}
@@ -211,6 +221,62 @@ void internalLightDim(){
 	internalLightDimCounter = 0;
 	isInternalLightDimming = 1;
 }
+
+enum ENGINE_States { CLOSE_OFF, OPEN_ON, OPEN_OFF, CLOSE_ON} ENGINE_State;
+int EngineTickFct_Sensor(int state) {
+	switch(state) { // Transitions
+      	case -1:
+			state = CLOSE_OFF;				 
+     		break;
+	  	case CLOSE_OFF: // Door close, engine off
+	  	{
+			if (doorStateChanged && isDoorOpen) { // Open door
+				state = OPEN_OFF
+        	} else if (engineStateChanged && isEngineOn){ // Engine starts
+        		state = CLOSE_ON
+        	}
+			break;
+		}
+      	case OPEN_ON: // Door open, engine on
+		{
+			if (engineStateChanged && !isEngineOn){ // Engine stops
+				state = OPEN_OFF;
+				isAlarmOn = 0;
+			} else if (doorStateChanged && !isDoorOpen){ // Close door
+				state = CLOSE_ON;
+				isAlarmOn = 0;
+			}
+			break;
+		}
+		case OPEN_OFF: // Door open, engine off
+		{
+			if (doorStateChanged && !isDoorOpen){ // Close door
+				state = CLOSE_OFF;
+			} else if (engineStateChanged && isEngineOn){ // Engine starts
+				state = OPEN_ON;
+				isAlarmOn = 1;
+			}
+			break;
+		}
+		case CLOSE_ON: // Door close, engine on
+		{
+			if (engineStateChanged && !isEngineOn) { // Engine stops
+				state = CLOSE_OFF;
+			} else if (doorStateChanged && isDoorOpen){ // Open door
+				state = OPEN_ON;
+				isAlarmOn = 1;
+			}
+			break;
+		}
+      default:
+         state = -1; break;
+      } // Transitions
+   	ENGINE_State = state;
+   	return state;
+	//print_slider();
+	//return state;
+}
+
 static void update_brightness(){
 	headlight_brightness = (1023 - Potentiometer) * 5 / 1023;
 	if(isInternalLightDimming && ++internalLightDimCounter %2 == 0){ //Every 0.4 seconds
@@ -283,6 +349,7 @@ __task void TASK_PWM(void) {
 }
 __task void TASK_SENSOR(void) {
   int state = -1;
+  int en_state = -1;
 	
 	const unsigned int taskperiod = 200; // Copy task period value in milliseconds here
   os_itv_set(taskperiod);
@@ -292,6 +359,7 @@ __task void TASK_SENSOR(void) {
 		read_buttons();
 		update_brightness();
 		state = TickFct_Sensor(state);
+		en_state = EngineTickFct_Sensor(en_state);
 		os_itv_wait();
    } // while (1)
 }
