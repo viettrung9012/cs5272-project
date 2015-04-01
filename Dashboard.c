@@ -221,48 +221,48 @@ void internalLightDim(){
 	isInternalLightDimming = 1;
 }
 
-enum ENGINE_States { CLOSE_OFF, OPEN_ON, OPEN_OFF, CLOSE_ON} ENGINE_State;
+enum ENGINE_States { CLOSE_OFF_ENGINE, OPEN_ON_ENGINE, OPEN_OFF_ENGINE, CLOSE_ON_ENGINE} ENGINE_State;
 int EngineTickFct_Sensor(int state) {
 	switch(state) { // Transitions
       	case -1:
-			state = CLOSE_OFF;				 
+			state = CLOSE_OFF_ENGINE;				 
      		break;
-	  	case CLOSE_OFF: // Door close, engine off
+	  	case CLOSE_OFF_ENGINE: // Door close, engine off
 	  	{
 			if (doorStateChanged && isDoorOpen) { // Open door
-				state = OPEN_OFF
+				state = OPEN_OFF_ENGINE;
         	} else if (engineStateChanged && isEngineOn){ // Engine starts
-        		state = CLOSE_ON
+        		state = CLOSE_ON_ENGINE;
         	}
 			break;
 		}
-      	case OPEN_ON: // Door open, engine on
+      	case OPEN_ON_ENGINE: // Door open, engine on
 		{
 			if (engineStateChanged && !isEngineOn){ // Engine stops
-				state = OPEN_OFF;
+				state = OPEN_OFF_ENGINE;
 				isAlarmOn = 0;
 			} else if (doorStateChanged && !isDoorOpen){ // Close door
-				state = CLOSE_ON;
+				state = CLOSE_ON_ENGINE;
 				isAlarmOn = 0;
 			}
 			break;
 		}
-		case OPEN_OFF: // Door open, engine off
+		case OPEN_OFF_ENGINE: // Door open, engine off
 		{
 			if (doorStateChanged && !isDoorOpen){ // Close door
-				state = CLOSE_OFF;
+				state = CLOSE_OFF_ENGINE;
 			} else if (engineStateChanged && isEngineOn){ // Engine starts
-				state = OPEN_ON;
+				state = OPEN_ON_ENGINE;
 				isAlarmOn = 1;
 			}
 			break;
 		}
-		case CLOSE_ON: // Door close, engine on
+		case CLOSE_ON_ENGINE: // Door close, engine on
 		{
 			if (engineStateChanged && !isEngineOn) { // Engine stops
-				state = CLOSE_OFF;
+				state = CLOSE_OFF_ENGINE;
 			} else if (doorStateChanged && isDoorOpen){ // Open door
-				state = OPEN_ON;
+				state = OPEN_ON_ENGINE;
 				isAlarmOn = 1;
 			}
 			break;
