@@ -18,9 +18,19 @@ extern __irq void ADC_IRQ_Handler (void); /* ADC  interrupt routine           */
 extern unsigned char AD_in_progress;      /* AD conversion in progress flag  */
 extern short Potentiometer;
 extern short SlideSensor;
+extern short ForceSensor;
 
 unsigned char A0,A1; //A0 - Button 3.5, A1 - Button 3.6
 unsigned char B0 = 0,B1 = 0,B2 = 0,B3 = 0,B4 = 0,B5 = 0,B6 = 0,B7 = 0; //B0-B7 represent LED's 0 through 7
+
+float BRAKE_MULTIPLIER = 2.0f;
+float FRICTION_MULTIPLIER = 0.20f;
+int MIN_FRICTION = 100;
+float ACC_MULTIPLIER = 0.1f;
+int speed = 0;
+float SPEED_MULTIPLIER = 0.05f;
+int MAX_SPEED = 3000;// divide by SPEED_MULTIPLIER
+
 
 unsigned short DARKNESS_THRESHOLD = 2; // if headlight brightness is equal or below this, it is dark.
 unsigned short MAX_BRIGHTNESS = 5;
@@ -157,7 +167,7 @@ void print_sensors(){
 	int y = Potentiometer;
 	char ss[5];
 	char pm[5];
-	sprintf(ss,"%d",SlideSensor);
+	sprintf(ss,"%d",(int)(speed*SPEED_MULTIPLIER));
 	sprintf(pm,"%d",Potentiometer);
 	LCD_on(); // Turn on LCD
 	LCD_cls();
@@ -292,7 +302,14 @@ int EngineTickFct_Sensor(int state) {
 	ENGINE_State = state;
 	return state;
 }
-
+static void update_speed(){
+	double friction = speed * FRICTION_MULTIPLIER;
+	if(friction<MIN_FRICTION) friction=MIN_FRICTION;
+	double acc = (((isEngineOn)? SlideSensor : 0) - ForceSensor * BRAKE_MULTIPLIER - friction) * ACC_MULTIPLIER;
+	speed += (int)acc;
+	if(speed>MAX_SPEED) speed = MAX_SPEED;
+	if(speed<0) speed = 0;
+}
 static void update_brightness(){
 	headlight_brightness = (MAX_POTENTIOMETER - Potentiometer) * 5 / MAX_POTENTIOMETER;
 	if(isInternalLightDimming && ++internalLightDimCounter % DIM_DURATION_CYCLES == 0){ //Every 0.4 seconds
@@ -373,6 +390,7 @@ __task void TASK_SENSOR(void) {
 	while(1){
 		read_input();
 		read_buttons();
+		update_speed();
 		update_brightness();
 		state = TickFct_Sensor(state);
 		en_state = EngineTickFct_Sensor(en_state);

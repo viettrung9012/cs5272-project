@@ -12,7 +12,7 @@
 #include <RTL.h>
 
 
-short Potentiometer,SlideSensor;
+short Potentiometer,SlideSensor,ForceSensor;
 
 
 unsigned char AD_in_progress;           /* AD conversion in progress flag     */
@@ -26,6 +26,7 @@ __irq void ADC_IRQ_Handler (void) {     /* AD converter interrupt routine     */
 	
 	SlideSensor = ADC->DR1 & 0x03FF;          /* AD value for global usage (10 bit) */	//dr4.1
 	
+	ForceSensor = ADC->DR2 & 0x03FF;          /* AD value for global usage (10 bit) */	//dr4.2
 	
 	
   ADC->CR &= 0xFFFE;                    /* Clear STR bit (Start Conversion)   */
