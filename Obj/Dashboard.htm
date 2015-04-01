@@ -3,9 +3,9 @@
 <title>Static Call Graph - [.\Obj\Dashboard.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Obj\Dashboard.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5.03 [Build 76]: Last Updated: Wed Apr 01 12:24:41 2015
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5.03 [Build 76]: Last Updated: Wed Apr 01 12:38:47 2015
 <BR><P>
-<H3>Maximum Stack Usage =         76 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
+<H3>Maximum Stack Usage =         68 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
 TASK_LCD &rArr; print_sensors &rArr; LCD_cls &rArr; LCD_gotoxy &rArr; lcd_wr_cmd &rArr; lcd_wait_busy
 <P>
@@ -227,7 +227,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> dashboard.o(.text)
 </UL>
-<P><STRONG><a name="[3b]"></a>read_buttons</STRONG> (Thumb, 108 bytes, Stack size 8 bytes, dashboard.o(.text))
+<P><STRONG><a name="[3a]"></a>read_buttons</STRONG> (Thumb, 108 bytes, Stack size 8 bytes, dashboard.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = read_buttons
 </UL>
 <BR>[Called By]<UL><LI><a href="#[10]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TASK_SENSOR
@@ -237,11 +237,11 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_Con
 </UL>
 
-<P><STRONG><a name="[3a]"></a>read_input</STRONG> (Thumb, 38 bytes, Stack size 0 bytes, dashboard.o(.text))
+<P><STRONG><a name="[39]"></a>read_input</STRONG> (Thumb, 38 bytes, Stack size 0 bytes, dashboard.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[10]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TASK_SENSOR
 </UL>
 
-<P><STRONG><a name="[39]"></a>write_led</STRONG> (Thumb, 52 bytes, Stack size 0 bytes, dashboard.o(.text))
+<P><STRONG><a name="[38]"></a>write_led</STRONG> (Thumb, 52 bytes, Stack size 0 bytes, dashboard.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[11]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TASK_PWM
 </UL>
 
@@ -250,11 +250,10 @@ Global Symbols
 <LI><a href="#[25]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LCD_putc
 </UL>
 
-<P><STRONG><a name="[34]"></a>print_sensors</STRONG> (Thumb, 116 bytes, Stack size 32 bytes, dashboard.o(.text))
-<BR><BR>[Stack]<UL><LI>Max Depth = 76<LI>Call Chain = print_sensors &rArr; LCD_cls &rArr; LCD_gotoxy &rArr; lcd_wr_cmd &rArr; lcd_wait_busy
+<P><STRONG><a name="[34]"></a>print_sensors</STRONG> (Thumb, 76 bytes, Stack size 24 bytes, dashboard.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 68<LI>Call Chain = print_sensors &rArr; LCD_cls &rArr; LCD_gotoxy &rArr; lcd_wr_cmd &rArr; lcd_wait_busy
 </UL>
-<BR>[Calls]<UL><LI><a href="#[36]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_idivmod
-<LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LCD_on
+<BR>[Calls]<UL><LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LCD_on
 <LI><a href="#[2e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LCD_cur_off
 <LI><a href="#[2a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LCD_cls
 <LI><a href="#[29]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LCD_gotoxy
@@ -269,16 +268,16 @@ Global Symbols
 <P><STRONG><a name="[12]"></a>TASK_Alarm</STRONG> (Thumb, 60 bytes, Stack size 0 bytes, dashboard.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 28<LI>Call Chain = TASK_Alarm &rArr; os_itv_wait &rArr; os_block &rArr; os_put_dly
 </UL>
-<BR>[Calls]<UL><LI><a href="#[38]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_itv_wait
-<LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_itv_set
+<BR>[Calls]<UL><LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_itv_wait
+<LI><a href="#[36]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_itv_set
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> dashboard.o(.text)
 </UL>
 <P><STRONG><a name="[13]"></a>TASK_LCD</STRONG> (Thumb, 114 bytes, Stack size 0 bytes, dashboard.o(.text))
-<BR><BR>[Stack]<UL><LI>Max Depth = 76<LI>Call Chain = TASK_LCD &rArr; print_sensors &rArr; LCD_cls &rArr; LCD_gotoxy &rArr; lcd_wr_cmd &rArr; lcd_wait_busy
+<BR><BR>[Stack]<UL><LI>Max Depth = 68<LI>Call Chain = TASK_LCD &rArr; print_sensors &rArr; LCD_cls &rArr; LCD_gotoxy &rArr; lcd_wr_cmd &rArr; lcd_wait_busy
 </UL>
-<BR>[Calls]<UL><LI><a href="#[38]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_itv_wait
-<LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_itv_set
+<BR>[Calls]<UL><LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_itv_wait
+<LI><a href="#[36]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_itv_set
 <LI><a href="#[34]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;print_sensors
 <LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LCD_on
 <LI><a href="#[2e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LCD_cur_off
@@ -291,27 +290,28 @@ Global Symbols
 <P><STRONG><a name="[11]"></a>TASK_PWM</STRONG> (Thumb, 66 bytes, Stack size 0 bytes, dashboard.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 28<LI>Call Chain = TASK_PWM &rArr; os_itv_wait &rArr; os_block &rArr; os_put_dly
 </UL>
-<BR>[Calls]<UL><LI><a href="#[38]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_itv_wait
-<LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_itv_set
-<LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_led
+<BR>[Calls]<UL><LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_itv_wait
+<LI><a href="#[36]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_itv_set
+<LI><a href="#[38]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_led
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> dashboard.o(.text)
 </UL>
-<P><STRONG><a name="[10]"></a>TASK_SENSOR</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, dashboard.o(.text))
-<BR><BR>[Stack]<UL><LI>Max Depth = 28<LI>Call Chain = TASK_SENSOR &rArr; os_itv_wait &rArr; os_block &rArr; os_put_dly
+<P><STRONG><a name="[10]"></a>TASK_SENSOR</STRONG> (Thumb, 64 bytes, Stack size 0 bytes, dashboard.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 28<LI>Call Chain = TASK_SENSOR &rArr; __aeabi_idivmod &rArr; __aeabi_uidivmod
 </UL>
-<BR>[Calls]<UL><LI><a href="#[38]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_itv_wait
-<LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_itv_set
-<LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_input
-<LI><a href="#[3b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_buttons
+<BR>[Calls]<UL><LI><a href="#[3b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_idivmod
+<LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_itv_wait
+<LI><a href="#[36]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_itv_set
+<LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_input
+<LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_buttons
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> dashboard.o(.text)
 </UL>
 <P><STRONG><a name="[f]"></a>ADC_Con</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, dashboard.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 28<LI>Call Chain = ADC_Con &rArr; os_itv_wait &rArr; os_block &rArr; os_put_dly
 </UL>
-<BR>[Calls]<UL><LI><a href="#[38]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_itv_wait
-<LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_itv_set
+<BR>[Calls]<UL><LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_itv_wait
+<LI><a href="#[36]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_itv_set
 <LI><a href="#[3c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;start_ADC
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> dashboard.o(.text)
@@ -378,7 +378,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[17]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__SWI_0
 <LI><a href="#[3d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_tsk_delete
 <LI><a href="#[21]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_tsk_create0
-<LI><a href="#[38]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_itv_wait
+<LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_itv_wait
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> hal_arm.o(.emb_text)
 </UL>
@@ -387,7 +387,7 @@ Global Symbols
 <P><STRONG><a name="[31]"></a>__aeabi_uidivmod</STRONG> (Thumb, 44 bytes, Stack size 12 bytes, uidiv.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = __aeabi_uidivmod
 </UL>
-<BR>[Called By]<UL><LI><a href="#[36]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_idivmod
+<BR>[Called By]<UL><LI><a href="#[3b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_idivmod
 <LI><a href="#[33]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;print_uns_char
 <LI><a href="#[30]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LCD_bargraph
 <LI><a href="#[42]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_printf_core
@@ -395,12 +395,12 @@ Global Symbols
 
 <P><STRONG><a name="[6d]"></a>__aeabi_idiv</STRONG> (Thumb, 0 bytes, Stack size 16 bytes, idiv.o(.text), UNUSED)
 
-<P><STRONG><a name="[36]"></a>__aeabi_idivmod</STRONG> (Thumb, 40 bytes, Stack size 16 bytes, idiv.o(.text))
+<P><STRONG><a name="[3b]"></a>__aeabi_idivmod</STRONG> (Thumb, 40 bytes, Stack size 16 bytes, idiv.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 28<LI>Call Chain = __aeabi_idivmod &rArr; __aeabi_uidivmod
 </UL>
 <BR>[Calls]<UL><LI><a href="#[31]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_uidivmod
 </UL>
-<BR>[Called By]<UL><LI><a href="#[34]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;print_sensors
+<BR>[Called By]<UL><LI><a href="#[10]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TASK_SENSOR
 </UL>
 
 <P><STRONG><a name="[24]"></a>__scatterload</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, init.o(.text))
@@ -471,7 +471,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_put_dly
 <LI><a href="#[48]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_get_first
 </UL>
-<BR>[Called By]<UL><LI><a href="#[38]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_itv_wait
+<BR>[Called By]<UL><LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_itv_wait
 </UL>
 
 <P><STRONG><a name="[49]"></a>os_chk_robin</STRONG> (Thumb, 60 bytes, Stack size 8 bytes, rt_robin.o(i.os_chk_robin))
@@ -531,7 +531,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_init_context
 </UL>
 
-<P><STRONG><a name="[37]"></a>os_itv_set</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, rt_time.o(i.os_itv_set))
+<P><STRONG><a name="[36]"></a>os_itv_set</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, rt_time.o(i.os_itv_set))
 <BR><BR>[Called By]<UL><LI><a href="#[f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_Con
 <LI><a href="#[10]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TASK_SENSOR
 <LI><a href="#[11]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TASK_PWM
@@ -539,7 +539,7 @@ Global Symbols
 <LI><a href="#[12]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TASK_Alarm
 </UL>
 
-<P><STRONG><a name="[38]"></a>os_itv_wait</STRONG> (Thumb, 46 bytes, Stack size 8 bytes, rt_time.o(i.os_itv_wait))
+<P><STRONG><a name="[37]"></a>os_itv_wait</STRONG> (Thumb, 46 bytes, Stack size 8 bytes, rt_time.o(i.os_itv_wait))
 <BR><BR>[Stack]<UL><LI>Max Depth = 28<LI>Call Chain = os_itv_wait &rArr; os_block &rArr; os_put_dly
 </UL>
 <BR>[Calls]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_block

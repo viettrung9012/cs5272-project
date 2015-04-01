@@ -23,7 +23,7 @@ extern short SlideSensor;
 unsigned char A0,A1; //A0 - Button 3.5, A1 - Button 3.6
 unsigned char B0 = 0,B1 = 0,B2 = 0,B3 = 0,B4 = 0,B5 = 0,B6 = 0,B7 = 0; //B0-B7 represent LED's 0 through 7
 
-unsigned short headlight_brightness,internal_brightness;
+unsigned short headlight_brightness,internal_brightness; // 0-5
 bool isAlarmOn = 1;
 bool isDoorOpen = 0;
 bool isEngineOn = 0;
@@ -131,12 +131,13 @@ void print_sensors(){
 	LCD_puts("Light: ");
 	LCD_puts(pm);
 	LCD_cur_off ();
-	
-	headlight_brightness = (1023 - Potentiometer) * 5 / 1023 + 1;
-	internal_brightness = SlideSensor * 6 / 550;
 }
 int TickFct_Sensor(int state) {
 	return state;
+}
+static void update_brightness(){
+	headlight_brightness = (1023 - Potentiometer) * 5 / 1023;
+	internal_brightness = SlideSensor * 6 / 550;
 }
 static void update_led(int pulse_state){
 	B0 = B1 = B2 = (headlight_brightness > pulse_state)? 1:0;
@@ -210,6 +211,7 @@ __task void TASK_SENSOR(void) {
 	while(1){
 		read_input();
 		read_buttons();
+		update_brightness();
 		state = TickFct_Sensor(state);
 		os_itv_wait();
    } // while (1)
