@@ -19,11 +19,28 @@ extern unsigned char AD_in_progress;      /* AD conversion in progress flag  */
 extern short Potentiometer;
 extern short SlideSensor;
 
-
 unsigned char A0,A1; //A0 - Button 3.5, A1 - Button 3.6
 unsigned char B0 = 0,B1 = 0,B2 = 0,B3 = 0,B4 = 0,B5 = 0,B6 = 0,B7 = 0; //B0-B7 represent LED's 0 through 7
 
-unsigned short headlight_brightness,internal_brightness; // 0-5
+unsigned short DARKNESS_THRESHOLD = 2; //if headlight is equal or below this, it is dark.
+unsigned short MAX_BRIGHTNESS = 5;
+unsigned short MAX_POTENTIOMETER = 1023;
+
+unsigned short ALARM_DELAY = 100; //100
+unsigned short PWM_DELAY = 200;
+unsigned short SENSOR_DELAY = 200;
+unsigned short LCD_DELAY = 100;
+unsigned short ACD_DELAY = 100;
+
+unsigned short ALARM_PRIORITY = 1;
+unsigned short PWM_PRIORITY = 1;
+unsigned short LCD_PRIORITY = 1;
+unsigned short SENSOR_PRIORITY = 0;
+unsigned short ACD_PRIORITY = 0;
+
+
+
+unsigned short headlight_brightness,internal_brightness; // 0 - MAX_BRIGHTNESS
 bool isAlarmOn = 0;
 bool isDoorOpen = 0;
 bool isEngineOn = 0;
@@ -119,7 +136,7 @@ OS_TID Alarm_controller_id; // Declare variable t_Lighting to store the task id
 OS_TID LCD_controller_id; // Declare variable t_Lighting to store the task id
 
 void internalLightOn(){
-	internal_brightness = 5;
+	internal_brightness = MAX_BRIGHTNESS;
 	isInternalLightDimming = 0;
 }
 void internalLightOff(){
@@ -158,7 +175,7 @@ int TickFct_Sensor(int state) {
 	  	case CLOSE_OFF: // Door close, light off
 	  	{
 			if (doorStateChanged && isDoorOpen) { // Open door
-				if (Potentiometer * 5 / 1023 <= 2) {// Outside is dark
+				if (Potentiometer * MAX_BRIGHTNESS / MAX_POTENTIOMETER <= DARKNESS_THRESHOLD) {// Outside is dark
 					internalLightOn();
           			state = OPEN_ON; // Door open, light on
 					counter = 0; // Start counter
@@ -279,7 +296,7 @@ int EngineTickFct_Sensor(int state) {
 }
 
 static void update_brightness(){
-	headlight_brightness = (1023 - Potentiometer) * 5 / 1023;
+	headlight_brightness = (MAX_POTENTIOMETER - Potentiometer) * 5 / MAX_POTENTIOMETER;
 	if(isInternalLightDimming && ++internalLightDimCounter %2 == 0){ //Every 0.4 seconds
 		internal_brightness --;
 		if(internal_brightness == 0) isInternalLightDimming = 0; 
@@ -291,7 +308,7 @@ static void update_led(int pulse_state){
 }
 __task void TASK_Alarm(void) {
 	bool b = 0;
-  os_itv_set(100);
+  os_itv_set(ALARM_DELAY);
   while(1){
 		b = !b;
 		if(isAlarmOn){
@@ -380,9 +397,6 @@ __task void ADC_Con(void){
 }	 // End ADC_Con(void)
 
 
-
-
-
 /*----------------------------------------------------------------------------
  *        Task 0 'init': Initialize
  *---------------------------------------------------------------------------*/
@@ -435,11 +449,11 @@ __task void init (void) {
 
  	counter=0;
 	
-	os_tsk_create(ADC_Con,0);	
-  Car_controller_id = os_tsk_create(TASK_SENSOR,0);
-  PWM_controller_id = os_tsk_create(TASK_PWM,1);
-  Alarm_controller_id = os_tsk_create(TASK_Alarm,1);
-  LCD_controller_id = os_tsk_create(TASK_LCD,1);
+	os_tsk_create(ADC_Con,ACD_PRIORITY);	
+  Car_controller_id = os_tsk_create(TASK_SENSOR,SENSOR_PRIORITY);
+  PWM_controller_id = os_tsk_create(TASK_PWM,PWM_PRIORITY);
+  Alarm_controller_id = os_tsk_create(TASK_Alarm,ALARM_PRIORITY);
+  LCD_controller_id = os_tsk_create(TASK_LCD,LCD_PRIORITY);
   
   os_tsk_delete_self ();
 }
