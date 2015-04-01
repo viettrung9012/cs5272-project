@@ -39,31 +39,32 @@ Dashboard.c(120): warning:  #177-D: variable "x" was declared but never referenc
         int x = SlideSensor;
 Dashboard.c(121): warning:  #177-D: variable "y" was declared but never referenced
         int y = Potentiometer;
-Dashboard.c(146): warning:  #188-D: enumerated type mixed with another type
+Dashboard.c(195): warning:  #188-D: enumerated type mixed with another type
+        CAR_State = state;
+Dashboard.c(209): warning:  #188-D: enumerated type mixed with another type
         bool b = 0;
-Dashboard.c(149): warning:  #188-D: enumerated type mixed with another type
+Dashboard.c(212): warning:  #188-D: enumerated type mixed with another type
                 b = !b;
-Dashboard.c(162): warning:  #188-D: enumerated type mixed with another type
+Dashboard.c(225): warning:  #188-D: enumerated type mixed with another type
         bool isLCDused = 0;
-Dashboard.c(167): warning:  #188-D: enumerated type mixed with another type
+Dashboard.c(230): warning:  #188-D: enumerated type mixed with another type
                         isLCDused = 1;
-Dashboard.c(170): warning:  #188-D: enumerated type mixed with another type
+Dashboard.c(233): warning:  #188-D: enumerated type mixed with another type
                                 isLCDused = 0;
-Dashboard.c(179): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "U8 *"
+Dashboard.c(242): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "U8 *"
                         LCD_puts((isEngineOn)?"on":"off");
-Dashboard.c(182): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "U8 *"
+Dashboard.c(245): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "U8 *"
                         LCD_puts((isDoorOpen)?"opened":"closed");
-Dashboard.c: 22 warnings, 0 errors
+Dashboard.c(373): warning:  #1-D: last line of file ends without a newline
+   *---------------------------------------------------------------------------*/
+Dashboard.c: 24 warnings, 0 errors
 linking...
-Program Size: Code=5872 RO-data=132 RW-data=100 ZI-data=12436  
-".\Obj\Dashboard.axf" - 0 Error(s), 22 Warning(s).
+Program Size: Code=6028 RO-data=132 RW-data=100 ZI-data=12436  
+".\Obj\Dashboard.axf" - 0 Error(s), 24 Warning(s).
 Load "C:\\Users\\John Goh\\Desktop\\CS5274\\Assignments\\git\\cs5272-project\\Obj\\Dashboard.axf" 
 Erase Done.
 Programming Done.
 Verify OK.
 Application running ...
-Load "C:\\Users\\John Goh\\Desktop\\CS5274\\Assignments\\git\\cs5272-project\\Obj\\Dashboard.axf" 
-Erase Done.
-Programming Done.
-Verify OK.
+rify OK.
 Application running ...

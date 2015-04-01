@@ -141,9 +141,9 @@ int TickFct_Sensor(int state) {
      		break;
 	  	case CLOSE_OFF: // Door close, light off
 	  	{
-			if (doorStateChanged && (Potentiometer * 5 / 1023) <= 2 ) { // Open door
+			if (doorStateChanged) { // Open door
 				if (Potentiometer * 5 / 1023 <= 2) {// Outside is dark
-					B4 = B5 = B6 = 1; // LightOn
+					B3 = B4 = B5 = 1; // LightOn
           			state = OPEN_ON; // Door open, light on
 					counter = 0; // Start counter
 				} else { // Outside is dark
@@ -164,7 +164,7 @@ int TickFct_Sensor(int state) {
 					counter++;
 				}
 			} else { // > 20s
-				B4 = B5 = B6 = 0;
+				B3 = B4 = B5 = 0;
 				state = OPEN_OFF;
 			}
 			break;
@@ -172,8 +172,8 @@ int TickFct_Sensor(int state) {
 		case OPEN_OFF: // Door open, light off
 		{
 			if (doorStateChanged){ // Close door
-				B4 = B5 = B6 = 1;
-				state = CLOSE_ON
+				B3 = B4 = B5 = 1;
+				state = CLOSE_ON;
 				counter = 0;
 			}
 			break;
@@ -184,7 +184,7 @@ int TickFct_Sensor(int state) {
 				counter++;
 			} else {
 				// need a dimOff method
-				B4 = B5 = B6 = 0;
+				B3 = B4 = B5 = 0;
 				state = CLOSE_OFF;
 			}
 			break;
@@ -203,7 +203,7 @@ static void update_brightness(){
 }
 static void update_led(int pulse_state){
 	B0 = B1 = B2 = (headlight_brightness > pulse_state)? 1:0;
-	B3 = B4 = B5 = (internal_brightness > pulse_state)? 1:0;	
+	//B3 = B4 = B5 = (internal_brightness > pulse_state)? 1:0;	
 }
 __task void TASK_Alarm(void) {
 	bool b = 0;
