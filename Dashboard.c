@@ -22,15 +22,20 @@ extern short SlideSensor;
 unsigned char A0,A1; //A0 - Button 3.5, A1 - Button 3.6
 unsigned char B0 = 0,B1 = 0,B2 = 0,B3 = 0,B4 = 0,B5 = 0,B6 = 0,B7 = 0; //B0-B7 represent LED's 0 through 7
 
-unsigned short DARKNESS_THRESHOLD = 2; //if headlight is equal or below this, it is dark.
+unsigned short DARKNESS_THRESHOLD = 2; // if headlight brightness is equal or below this, it is dark.
 unsigned short MAX_BRIGHTNESS = 5;
 unsigned short MAX_POTENTIOMETER = 1023;
 
-unsigned short ALARM_DELAY = 100; //100
-unsigned short PWM_DELAY = 200;
-unsigned short SENSOR_DELAY = 200;
-unsigned short LCD_DELAY = 100;
-unsigned short ACD_DELAY = 100;
+unsigned short ALARM_DELAY = 100; // 100
+unsigned short PWM_DELAY = 2; // 2 : (MAX_BRIGHTNESS+1) * PWM_DELAY = PWM_CYCLE_LENGTH
+unsigned short SENSOR_DELAY = 200; // 200
+unsigned short LCD_DELAY = 100; // 100
+unsigned short ACD_DELAY = 100; // 100
+
+unsigned short DIM_DURATION_CYCLES = 2; // 2 (0.4s) SENSOR_DELAY*DIM_DURATION_CYCLES = duration of each brightness state when dimming
+unsigned short LCD_STATUS_DELAY_CYCLES = 10; // 10 (1s) LCD_DELAY*LCD_STATUS_DELAY_CYCLES = duration of status update on LCD
+unsigned short CAR_OPEN_ON_LIGHT_CYCLES = 100; // 100 (20s) SENSOR_DELAY*CAR_OPEN_ON_LIGHT_CYCLES = duration until lights turn off
+unsigned short CAR_CLOSE_ON_CYCLES = 50; // 50 (10s) SENSOR_DELAY*CAR_CLOSE_ON_CYCLES = duration until lights dim off
 
 unsigned short ALARM_PRIORITY = 1;
 unsigned short PWM_PRIORITY = 1;
@@ -38,9 +43,7 @@ unsigned short LCD_PRIORITY = 1;
 unsigned short SENSOR_PRIORITY = 0;
 unsigned short ACD_PRIORITY = 0;
 
-
-
-unsigned short headlight_brightness,internal_brightness; // 0 - MAX_BRIGHTNESS
+unsigned short headlight_brightness,internal_brightness; // 0 to MAX_BRIGHTNESS
 bool isAlarmOn = 0;
 bool isDoorOpen = 0;
 bool isEngineOn = 0;
@@ -169,31 +172,31 @@ void print_sensors(){
 enum CAR_States { CLOSE_OFF, OPEN_ON, OPEN_OFF, CLOSE_ON} CAR_State;
 int TickFct_Sensor(int state) {
 	switch(state) { // Transitions
-      	case -1:
+		case -1:{
 			state = CLOSE_OFF;				 
-     		break;
-	  	case CLOSE_OFF: // Door close, light off
-	  	{
+			break;
+		}
+		case CLOSE_OFF:{ // Door close, light off
 			if (doorStateChanged && isDoorOpen) { // Open door
 				if (Potentiometer * MAX_BRIGHTNESS / MAX_POTENTIOMETER <= DARKNESS_THRESHOLD) {// Outside is dark
 					internalLightOn();
-          			state = OPEN_ON; // Door open, light on
+								state = OPEN_ON; // Door open, light on
 					counter = 0; // Start counter
 				} else { // Outside is dark
 					state = OPEN_OFF;
 				}
-        	}
-			else // Nothing happens
+			}
+			else{ // Nothing happens
 				state = CLOSE_OFF;
+			}
 			break;
 		}
-      	case OPEN_ON: // Door open, light on
-		{
+		case OPEN_ON:{ // Door open, light on
 			if (engineStateChanged && isEngineOn){ // Engine starts
 				internalLightOff();
 				state = OPEN_OFF;
 			} else {
-				if (counter <= 100){ // <= 20s
+				if (counter <= CAR_OPEN_ON_LIGHT_CYCLES){ // <= 20s
 					if (doorStateChanged && !isDoorOpen){ // Close door
 						state = CLOSE_ON;
 						counter = 0;
@@ -207,8 +210,7 @@ int TickFct_Sensor(int state) {
 			}
 			break;
 		}
-		case OPEN_OFF: // Door open, light off
-		{
+		case OPEN_OFF:{ // Door open, light off
 			if (doorStateChanged && !isDoorOpen){ // Close door
 				internalLightOn();
 				state = CLOSE_ON;
@@ -216,13 +218,12 @@ int TickFct_Sensor(int state) {
 			}
 			break;
 		}
-		case CLOSE_ON: // Door close, light on
-		{
+		case CLOSE_ON:{ // Door close, light on
 			if (engineStateChanged && isEngineOn) { // Engine starts
 				internalLightOff();
 				state = CLOSE_OFF;
 			} else {
-				if (counter <= 50){ // <= 10s
+				if (counter <= CAR_CLOSE_ON_CYCLES){ // <= 10s
 					counter++;
 				} else {
 					internalLightDim();
@@ -231,32 +232,31 @@ int TickFct_Sensor(int state) {
 			}
 			break;
 		}
-      default:
-         state = -1; break;
-      } // Transitions
-   	CAR_State = state;
-   	return state;
-	//print_slider();
-	//return state;
+		default:{
+			state = -1;
+			break;
+		}
+	} // Transitions
+	CAR_State = state;
+	return state;
 }
 
 enum ENGINE_States { CLOSE_OFF_ENGINE, OPEN_ON_ENGINE, OPEN_OFF_ENGINE, CLOSE_ON_ENGINE} ENGINE_State;
 int EngineTickFct_Sensor(int state) {
 	switch(state) { // Transitions
-      	case -1:
+		case -1:{
 			state = CLOSE_OFF_ENGINE;				 
-     		break;
-	  	case CLOSE_OFF_ENGINE: // Door close, engine off
-	  	{
-			if (doorStateChanged && isDoorOpen) { // Open door
-				state = OPEN_OFF_ENGINE;
-        	} else if (engineStateChanged && isEngineOn){ // Engine starts
-        		state = CLOSE_ON_ENGINE;
-        	}
 			break;
 		}
-      	case OPEN_ON_ENGINE: // Door open, engine on
-		{
+		case CLOSE_OFF_ENGINE:{ // Door close, engine off
+			if (doorStateChanged && isDoorOpen) { // Open door
+				state = OPEN_OFF_ENGINE;
+			} else if (engineStateChanged && isEngineOn){ // Engine starts
+				state = CLOSE_ON_ENGINE;
+			}
+			break;
+		}
+		case OPEN_ON_ENGINE:{ // Door open, engine on
 			if (engineStateChanged && !isEngineOn){ // Engine stops
 				state = OPEN_OFF_ENGINE;
 				isAlarmOn = 0;
@@ -266,8 +266,7 @@ int EngineTickFct_Sensor(int state) {
 			}
 			break;
 		}
-		case OPEN_OFF_ENGINE: // Door open, engine off
-		{
+		case OPEN_OFF_ENGINE:{ // Door open, engine off
 			if (doorStateChanged && !isDoorOpen){ // Close door
 				state = CLOSE_OFF_ENGINE;
 			} else if (engineStateChanged && isEngineOn){ // Engine starts
@@ -276,8 +275,7 @@ int EngineTickFct_Sensor(int state) {
 			}
 			break;
 		}
-		case CLOSE_ON_ENGINE: // Door close, engine on
-		{
+		case CLOSE_ON_ENGINE:{ // Door close, engine on	
 			if (engineStateChanged && !isEngineOn) { // Engine stops
 				state = CLOSE_OFF_ENGINE;
 			} else if (doorStateChanged && isDoorOpen){ // Open door
@@ -286,18 +284,18 @@ int EngineTickFct_Sensor(int state) {
 			}
 			break;
 		}
-      default:
-         state = -1; break;
-      } // Transitions
-   	ENGINE_State = state;
-   	return state;
-	//print_slider();
-	//return state;
+		default:{
+			state = -1;
+			break;
+		}
+	} // Transitions
+	ENGINE_State = state;
+	return state;
 }
 
 static void update_brightness(){
 	headlight_brightness = (MAX_POTENTIOMETER - Potentiometer) * 5 / MAX_POTENTIOMETER;
-	if(isInternalLightDimming && ++internalLightDimCounter %2 == 0){ //Every 0.4 seconds
+	if(isInternalLightDimming && ++internalLightDimCounter % DIM_DURATION_CYCLES == 0){ //Every 0.4 seconds
 		internal_brightness --;
 		if(internal_brightness == 0) isInternalLightDimming = 0; 
 	}
@@ -321,7 +319,7 @@ __task void TASK_Alarm(void) {
 	}
 }
 __task void TASK_LCD(void) {
-	const unsigned int taskperiod = 100; // Copy task period value in milliseconds here
+	const unsigned int taskperiod = LCD_DELAY; // Copy task period value in milliseconds here
   unsigned int LCDcounter = 0;
 	bool isLCDused = 0;
   os_itv_set(taskperiod);
@@ -330,7 +328,7 @@ __task void TASK_LCD(void) {
 			LCDcounter = 0;
 			isLCDused = 1;
 		}else if(isLCDused){
-			if(LCDcounter > 10){
+			if(LCDcounter > LCD_STATUS_DELAY_CYCLES){//
 				isLCDused = 0;
 			}else{
 				LCDcounter++;
@@ -355,8 +353,8 @@ __task void TASK_LCD(void) {
 
 __task void TASK_PWM(void) {
   int pulse_state = 0;
-  int pulse_states = 6;
-	const unsigned int taskperiod = 2; // Copy task period value in milliseconds here
+  int pulse_states = MAX_BRIGHTNESS + 1;
+	const unsigned int taskperiod = PWM_DELAY; // Copy task period value in milliseconds here
   os_itv_set(taskperiod);
 	while(1){
 		update_led(pulse_state);
@@ -369,7 +367,7 @@ __task void TASK_SENSOR(void) {
   int state = -1;
   int en_state = -1;
 	
-	const unsigned int taskperiod = 200; // Copy task period value in milliseconds here
+	const unsigned int taskperiod = SENSOR_DELAY; // Copy task period value in milliseconds here
   os_itv_set(taskperiod);
 	
 	while(1){
@@ -387,7 +385,7 @@ __task void TASK_SENSOR(void) {
  *---------------------------------------------------------------------------*/
 __task void ADC_Con(void){
   // timing
-	const unsigned int period = 100;
+	const unsigned int period = ACD_DELAY;
 	os_itv_set(period);	
 		for(;;){ 
 		os_itv_wait();
