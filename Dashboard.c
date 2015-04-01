@@ -24,7 +24,7 @@ unsigned char A0,A1; //A0 - Button 3.5, A1 - Button 3.6
 unsigned char B0 = 0,B1 = 0,B2 = 0,B3 = 0,B4 = 0,B5 = 0,B6 = 0,B7 = 0; //B0-B7 represent LED's 0 through 7
 
 unsigned short headlight_brightness,internal_brightness; // 0-5
-bool isAlarmOn = 1;
+bool isAlarmOn = 0;
 bool isDoorOpen = 0;
 bool isEngineOn = 0;
 bool doorStateChanged = 0;
@@ -118,6 +118,20 @@ OS_TID PWM_controller_id; // Declare variable t_Lighting to store the task id
 OS_TID Alarm_controller_id; // Declare variable t_Lighting to store the task id
 OS_TID LCD_controller_id; // Declare variable t_Lighting to store the task id
 
+void internalLightOn(){
+	internal_brightness = 5;
+	isInternalLightDimming = 0;
+}
+void internalLightOff(){
+	internal_brightness = 0;
+	isInternalLightDimming = 0;
+}
+void internalLightDim(){	
+	internalLightDimCounter = 0;
+	isInternalLightDimming = 1;
+}
+
+
 void print_sensors(){
 	int x = SlideSensor;
 	int y = Potentiometer;
@@ -207,18 +221,6 @@ int TickFct_Sensor(int state) {
    	return state;
 	//print_slider();
 	//return state;
-}
-void internalLightOn(){
-	internal_brightness = 5;
-	isInternalLightDimming = 0;
-}
-void internalLightOff(){
-	internal_brightness = 0;
-	isInternalLightDimming = 0;
-}
-void internalLightDim(){	
-	internalLightDimCounter = 0;
-	isInternalLightDimming = 1;
 }
 
 enum ENGINE_States { CLOSE_OFF_ENGINE, OPEN_ON_ENGINE, OPEN_OFF_ENGINE, CLOSE_ON_ENGINE} ENGINE_State;
