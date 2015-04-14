@@ -39,17 +39,17 @@ unsigned short MAX_POTENTIOMETER = 1023;
 unsigned short ALARM_DELAY = 100; // 100
 unsigned short PWM_DELAY = 2; // 2 : (MAX_BRIGHTNESS+1) * PWM_DELAY = PWM_CYCLE_LENGTH
 unsigned short SENSOR_DELAY = 200; // 200
-unsigned short LCD_DELAY = 100; // 100
+unsigned short LCD_STATE_DELAY = 200; // 200
 unsigned short ACD_DELAY = 100; // 100
 
+unsigned short LCD_STATE_DURATION_CYCLES = 5; // 5 (1.0s) duration of LCD state
 unsigned short DIM_DURATION_CYCLES = 2; // 2 (0.4s) SENSOR_DELAY*DIM_DURATION_CYCLES = duration of each brightness state when dimming
-unsigned short LCD_STATUS_DELAY_CYCLES = 10; // 10 (1s) LCD_DELAY*LCD_STATUS_DELAY_CYCLES = duration of status update on LCD
 unsigned short CAR_OPEN_ON_LIGHT_CYCLES = 100; // 100 (20s) SENSOR_DELAY*CAR_OPEN_ON_LIGHT_CYCLES = duration until lights turn off
 unsigned short CAR_CLOSE_ON_CYCLES = 50; // 50 (10s) SENSOR_DELAY*CAR_CLOSE_ON_CYCLES = duration until lights dim off
 
 unsigned short ALARM_PRIORITY = 1;
 unsigned short PWM_PRIORITY = 1;
-unsigned short LCD_PRIORITY = 1;
+unsigned short LCD_STATE_PRIORITY = 1;
 unsigned short SENSOR_PRIORITY = 0;
 unsigned short ACD_PRIORITY = 0;
 
@@ -69,6 +69,26 @@ unsigned int internalLightDimCounter = 0;
 unsigned int i, counter;
 unsigned char SENSOR = 0;
 
+OS_MUT LCD_Mutex;
+
+void write_LCD(){
+	char ss[5];
+	char pm[5];
+	
+	os_mut_wait (&LCD_Mutex, 0xFFFF);
+	sprintf(ss,"%d",(int)(speed*SPEED_MULTIPLIER));
+	sprintf(pm,"%d",Potentiometer);
+	LCD_on(); // Turn on LCD
+	LCD_cls();
+	LCD_puts("Speed: ");
+	LCD_puts(ss);
+	LCD_gotoxy(1,2);  // switch to the second line
+	LCD_puts("Light: ");
+	LCD_puts(pm);
+	LCD_cur_off ();
+	
+	os_mut_release(&LCD_Mutex);
+}
 //Function to read input
 void read_buttons()
 {
@@ -146,7 +166,7 @@ void print_uns_char (unsigned char value)
 OS_TID Car_controller_id; // Declare variable t_Lighting to store the task id
 OS_TID PWM_controller_id; // Declare variable t_Lighting to store the task id
 OS_TID Alarm_controller_id; // Declare variable t_Lighting to store the task id
-OS_TID LCD_controller_id; // Declare variable t_Lighting to store the task id
+OS_TID LCD_state_controller_id; // Declare variable t_Lighting to store the task id
 
 void internalLightOn(){
 	internal_brightness = MAX_BRIGHTNESS;
@@ -159,24 +179,6 @@ void internalLightOff(){
 void internalLightDim(){	
 	internalLightDimCounter = 0;
 	isInternalLightDimming = 1;
-}
-
-
-void print_sensors(){
-	int x = SlideSensor;
-	int y = Potentiometer;
-	char ss[5];
-	char pm[5];
-	sprintf(ss,"%d",(int)(speed*SPEED_MULTIPLIER));
-	sprintf(pm,"%d",Potentiometer);
-	LCD_on(); // Turn on LCD
-	LCD_cls();
-	LCD_puts("Speed: ");
-	LCD_puts(ss);
-	LCD_gotoxy(1,2);  // switch to the second line
-	LCD_puts("Light: ");
-	LCD_puts(pm);
-	LCD_cur_off ();
 }
 
 enum CAR_States { CLOSE_OFF, OPEN_ON, OPEN_OFF, CLOSE_ON} CAR_State;
@@ -303,9 +305,11 @@ int EngineTickFct_Sensor(int state) {
 	return state;
 }
 static void update_speed(){
+	double acc;
 	double friction = speed * FRICTION_MULTIPLIER;
-	if(friction<MIN_FRICTION) friction=MIN_FRICTION;
-	double acc = (((isEngineOn)? SlideSensor : 0) - ForceSensor * BRAKE_MULTIPLIER - friction) * ACC_MULTIPLIER;
+	
+	if(friction<MIN_FRICTION) friction = MIN_FRICTION;
+	acc = (((isEngineOn)? SlideSensor : 0) - ForceSensor * BRAKE_MULTIPLIER - friction) * ACC_MULTIPLIER;
 	speed += (int)acc;
 	if(speed>MAX_SPEED) speed = MAX_SPEED;
 	if(speed<0) speed = 0;
@@ -321,6 +325,37 @@ static void update_led(int pulse_state){
 	B0 = B1 = B2 = (headlight_brightness > pulse_state)? 1:0;
 	B3 = B4 = B5 = (internal_brightness > pulse_state)? 1:0;	
 }
+
+__task void TASK_LCD_STATE(void) {
+  int lcd_task_state_counter = -1;
+	bool isHoldingMutex = 0;
+  os_itv_set(LCD_STATE_DELAY);
+  while(1){
+		if(counter > -1) counter++;
+		if(doorStateChanged == 1 || engineStateChanged ==1){
+			if(isHoldingMutex == 0){
+				os_mut_wait (&LCD_Mutex, 0xFFFF);
+				isHoldingMutex = 1;
+			}
+			LCD_on(); // Turn on LCD
+			LCD_cls();
+			LCD_puts("Engine is ");
+			LCD_puts((isEngineOn)?"on":"off");
+			LCD_gotoxy(1,2);  // switch to the second line
+			LCD_puts("Door is ");
+			LCD_puts((isDoorOpen)?"opened":"closed");
+			LCD_cur_off ();
+			counter = 0;
+		}
+		if(counter == LCD_STATE_DURATION_CYCLES){
+			counter = -1;
+			os_mut_release(&LCD_Mutex);
+			isHoldingMutex = 0;
+		}
+		os_itv_wait();
+	}
+}
+
 __task void TASK_Alarm(void) {
 	bool b = 0;
   os_itv_set(ALARM_DELAY);
@@ -335,38 +370,6 @@ __task void TASK_Alarm(void) {
 		os_itv_wait();
 	}
 }
-__task void TASK_LCD(void) {
-	const unsigned int taskperiod = LCD_DELAY; // Copy task period value in milliseconds here
-  unsigned int LCDcounter = 0;
-	bool isLCDused = 0;
-  os_itv_set(taskperiod);
-	while(1){
-		if(doorStateChanged || engineStateChanged){
-			LCDcounter = 0;
-			isLCDused = 1;
-		}else if(isLCDused){
-			if(LCDcounter > LCD_STATUS_DELAY_CYCLES){//
-				isLCDused = 0;
-			}else{
-				LCDcounter++;
-			}
-		}
-		if(isLCDused){
-			LCD_on(); // Turn on LCD
-			LCD_cls();
-			LCD_puts("Engine is ");
-			LCD_puts((isEngineOn)?"on":"off");
-			LCD_gotoxy(1,2);  // switch to the second line
-			LCD_puts("Door is ");
-			LCD_puts((isDoorOpen)?"opened":"closed");
-			LCD_cur_off ();
-		}else{
-			print_sensors();
-		}
-		os_itv_wait();
-   } // while (1)
-}
-
 
 __task void TASK_PWM(void) {
   int pulse_state = 0;
@@ -409,6 +412,7 @@ __task void ADC_Con(void){
 		os_itv_wait();
 		/* Do actions below */
 		start_ADC();
+		write_LCD();
 		}
 }	 // End ADC_Con(void)
 
@@ -462,6 +466,8 @@ __task void init (void) {
   LCD_init(); //Initialize LCD
   LCD_cur_off(); //Remove LCD cursor
   LCD_cls(); //Clearing LCD screen
+	
+	os_mut_init (&LCD_Mutex);
 
  	counter=0;
 	
@@ -469,7 +475,7 @@ __task void init (void) {
   Car_controller_id = os_tsk_create(TASK_SENSOR,SENSOR_PRIORITY);
   PWM_controller_id = os_tsk_create(TASK_PWM,PWM_PRIORITY);
   Alarm_controller_id = os_tsk_create(TASK_Alarm,ALARM_PRIORITY);
-  LCD_controller_id = os_tsk_create(TASK_LCD,LCD_PRIORITY);
+  LCD_state_controller_id = os_tsk_create(TASK_LCD_STATE,LCD_STATE_PRIORITY);
   
   os_tsk_delete_self ();
 }
