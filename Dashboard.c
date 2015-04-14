@@ -39,7 +39,7 @@ unsigned short MAX_POTENTIOMETER = 1023;
 unsigned short ALARM_DELAY = 100; // 100
 unsigned short PWM_DELAY = 2; // 2 : (MAX_BRIGHTNESS+1) * PWM_DELAY = PWM_CYCLE_LENGTH
 unsigned short SENSOR_DELAY = 200; // 200
-unsigned short LCD_STATE_DELAY = 200; // 200
+unsigned short LCD_STATE_DELAY = 100; // 100
 unsigned short ACD_DELAY = 100; // 100
 
 unsigned short LCD_STATE_DURATION_CYCLES = 5; // 5 (1.0s) duration of LCD state
@@ -75,7 +75,7 @@ void write_LCD(){
 	char ss[5];
 	char pm[5];
 	
-	os_mut_wait (&LCD_Mutex, 0xFFFF);
+	os_mut_wait(&LCD_Mutex, 0xFFFF);
 	sprintf(ss,"%d",(int)(speed*SPEED_MULTIPLIER));
 	sprintf(pm,"%d",Potentiometer);
 	LCD_on(); // Turn on LCD
@@ -313,6 +313,7 @@ static void update_speed(){
 	speed += (int)acc;
 	if(speed>MAX_SPEED) speed = MAX_SPEED;
 	if(speed<0) speed = 0;
+	speed =SlideSensor;
 }
 static void update_brightness(){
 	headlight_brightness = (MAX_POTENTIOMETER - Potentiometer) * 5 / MAX_POTENTIOMETER;
@@ -327,28 +328,32 @@ static void update_led(int pulse_state){
 }
 
 __task void TASK_LCD_STATE(void) {
-  int lcd_task_state_counter = -1;
+  unsigned short lcd_task_state_counter = -1;
 	bool isHoldingMutex = 0;
+	bool isWaiting = 0;
   os_itv_set(LCD_STATE_DELAY);
   while(1){
-		if(counter > -1) counter++;
-		if(doorStateChanged == 1 || engineStateChanged ==1){
+		if(lcd_task_state_counter > -1) lcd_task_state_counter++;
+		if(isWaiting == 0 && (doorStateChanged == 1 || engineStateChanged == 1)){
 			if(isHoldingMutex == 0){
-				os_mut_wait (&LCD_Mutex, 0xFFFF);
+				isWaiting = 1;
+				os_mut_wait(&LCD_Mutex, 0xFFFF);
+				isWaiting = 0;
 				isHoldingMutex = 1;
 			}
 			LCD_on(); // Turn on LCD
 			LCD_cls();
+			
 			LCD_puts("Engine is ");
 			LCD_puts((isEngineOn)?"on":"off");
 			LCD_gotoxy(1,2);  // switch to the second line
 			LCD_puts("Door is ");
 			LCD_puts((isDoorOpen)?"opened":"closed");
 			LCD_cur_off ();
-			counter = 0;
+			lcd_task_state_counter = 0;
 		}
-		if(counter == LCD_STATE_DURATION_CYCLES){
-			counter = -1;
+		if(lcd_task_state_counter >= LCD_STATE_DURATION_CYCLES){
+			lcd_task_state_counter = -1;
 			os_mut_release(&LCD_Mutex);
 			isHoldingMutex = 0;
 		}
