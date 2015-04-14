@@ -27,13 +27,12 @@ extern OS_MBX p_box;
 extern OS_MBX s_box;
 extern OS_MBX f_box;
 
-float BRAKE_MULTIPLIER = 2.0f;
-float FRICTION_MULTIPLIER = 0.20f;
-int MIN_FRICTION = 100;
-float ACC_MULTIPLIER = 0.1f;
-int speed = 0;
-float SPEED_MULTIPLIER = 0.05f;
-int MAX_SPEED = 3000;// divide by SPEED_MULTIPLIER
+float BRAKE_MULTIPLIER = 0.10f;
+float FRICTION_MULTIPLIER = 0.1f;
+float MIN_FRICTION = 0.5f;
+float ACC_MULTIPLIER = 0.03f;
+float speed = 0;
+int MAX_SPEED = 200;
 
 
 unsigned short DARKNESS_THRESHOLD = 2; // if headlight brightness is equal or below this, it is dark.
@@ -58,16 +57,16 @@ unsigned short SENSOR_PRIORITY = 0;
 unsigned short ACD_PRIORITY = 0;
 
 unsigned short headlight_brightness,internal_brightness; // 0 to MAX_BRIGHTNESS
-bool isAlarmOn = 0;
-bool isDoorOpen = 0;
-bool isEngineOn = 0;
-bool doorStateChanged = 0;
-bool engineStateChanged = 0;
+bool isAlarmOn = FALSE;
+bool isDoorOpen = FALSE;
+bool isEngineOn = FALSE;
+bool doorStateChanged = FALSE;
+bool engineStateChanged = FALSE;
 
 unsigned char wasAOpressed = 0;
 unsigned char wasA1pressed = 0;
 
-bool isInternalLightDimming = 0;
+bool isInternalLightDimming = FALSE;
 unsigned int internalLightDimCounter = 0;
 
 unsigned int i, counter;
@@ -119,14 +118,14 @@ void read_buttons()
 	//BUTTON_3_6:
 	A1 = !(GPIO3->DR[0x100]>>6); // Returns 1 when pressed and 0 when released
 	
-	engineStateChanged = doorStateChanged = 0;
+	engineStateChanged = doorStateChanged = FALSE;
 	
-	if(wasAOpressed == 1 && A0 == 0){
-		doorStateChanged = 1;
+	if(wasAOpressed && A0 == 0){
+		doorStateChanged = TRUE;
 		isDoorOpen = !isDoorOpen;
 	}
-	if(wasA1pressed == 1 && A1 == 0){
-		engineStateChanged = 1;		
+	if(wasA1pressed == TRUE && A1 == 0){
+		engineStateChanged = TRUE;		
 		isEngineOn = !isEngineOn;
 	}
 	
@@ -192,15 +191,15 @@ OS_TID LCD_state_controller_id; // Declare variable t_Lighting to store the task
 
 void internalLightOn(){
 	internal_brightness = MAX_BRIGHTNESS;
-	isInternalLightDimming = 0;
+	isInternalLightDimming = FALSE;
 }
 void internalLightOff(){
 	internal_brightness = 0;
-	isInternalLightDimming = 0;
+	isInternalLightDimming = FALSE;
 }
 void internalLightDim(){	
-	internalLightDimCounter = 0;
-	isInternalLightDimming = 1;
+	internalLightDimCounter = FALSE;
+	isInternalLightDimming = TRUE;
 }
 
 enum CAR_States { CLOSE_OFF, OPEN_ON, OPEN_OFF, CLOSE_ON} CAR_State;
@@ -293,10 +292,10 @@ int EngineTickFct_Sensor(int state) {
 		case OPEN_ON_ENGINE:{ // Door open, engine on
 			if (engineStateChanged && !isEngineOn){ // Engine stops
 				state = OPEN_OFF_ENGINE;
-				isAlarmOn = 0;
+				isAlarmOn = FALSE;
 			} else if (doorStateChanged && !isDoorOpen){ // Close door
 				state = CLOSE_ON_ENGINE;
-				isAlarmOn = 0;
+				isAlarmOn = FALSE;
 			}
 			break;
 		}
@@ -305,7 +304,7 @@ int EngineTickFct_Sensor(int state) {
 				state = CLOSE_OFF_ENGINE;
 			} else if (engineStateChanged && isEngineOn){ // Engine starts
 				state = OPEN_ON_ENGINE;
-				isAlarmOn = 1;
+				isAlarmOn = TRUE;
 			}
 			break;
 		}
@@ -314,7 +313,7 @@ int EngineTickFct_Sensor(int state) {
 				state = CLOSE_OFF_ENGINE;
 			} else if (doorStateChanged && isDoorOpen){ // Open door
 				state = OPEN_ON_ENGINE;
-				isAlarmOn = 1;
+				isAlarmOn = TRUE;
 			}
 			break;
 		}
@@ -331,17 +330,17 @@ static void update_speed(){
 	double friction = speed * FRICTION_MULTIPLIER;
 	
 	if(friction<MIN_FRICTION) friction = MIN_FRICTION;
-	acc = (((isEngineOn)? slidesensor : 0) - forcesensor * BRAKE_MULTIPLIER - friction) * ACC_MULTIPLIER;
+	acc = ((isEngineOn)? slidesensor*ACC_MULTIPLIER : 0) - forcesensor * BRAKE_MULTIPLIER - friction;
 	speed += (int)acc;
 	if(speed>MAX_SPEED) speed = MAX_SPEED;
 	if(speed<0) speed = 0;
-	speed =slidesensor;
+	speed = forcesensor;
 }
 static void update_brightness(){
 	headlight_brightness = (MAX_POTENTIOMETER - potentiometer) * 5 / MAX_POTENTIOMETER;
 	if(isInternalLightDimming && ++internalLightDimCounter % DIM_DURATION_CYCLES == 0){ //Every 0.4 seconds
 		internal_brightness --;
-		if(internal_brightness == 0) isInternalLightDimming = 0; 
+		if(internal_brightness == 0) isInternalLightDimming = FALSE; 
 	}
 }
 static void update_led(int pulse_state){
@@ -350,18 +349,18 @@ static void update_led(int pulse_state){
 }
 
 __task void TASK_LCD_STATE(void) {
-  unsigned short lcd_task_state_counter = -1;
-	bool isHoldingMutex = 0;
-	bool isWaiting = 0;
+  int lcd_task_state_counter = -1;
+	bool isHoldingMutex = FALSE;
+	bool isWaiting = FALSE;
   os_itv_set(LCD_STATE_DELAY);
   while(1){
 		if(lcd_task_state_counter > -1) lcd_task_state_counter++;
-		if(isWaiting == 0 && (doorStateChanged == 1 || engineStateChanged == 1)){
-			if(isHoldingMutex == 0){
-				isWaiting = 1;
+		if(!isWaiting && (doorStateChanged || engineStateChanged)){
+			if(!isHoldingMutex){
+				isWaiting = TRUE;
 				os_mut_wait(&LCD_Mutex, 0xFFFF);
-				isWaiting = 0;
-				isHoldingMutex = 1;
+				isWaiting = FALSE;
+				isHoldingMutex = TRUE;
 			}
 			LCD_on(); // Turn on LCD
 			LCD_cls();
@@ -377,14 +376,14 @@ __task void TASK_LCD_STATE(void) {
 		if(lcd_task_state_counter >= LCD_STATE_DURATION_CYCLES){
 			lcd_task_state_counter = -1;
 			os_mut_release(&LCD_Mutex);
-			isHoldingMutex = 0;
+			isHoldingMutex = FALSE;
 		}
 		os_itv_wait();
 	}
 }
 
 __task void TASK_Alarm(void) {
-	bool b = 0;
+	bool b = FALSE;
   os_itv_set(ALARM_DELAY);
   while(1){
 		b = !b;

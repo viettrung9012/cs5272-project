@@ -1,5 +1,5 @@
 Dependencies for Project 'Dashboard', Target 'MCBSTR9': (DO NOT MODIFY !)
-F (.\LCD.c)(0x551B59F5)(--thumb -c --cpu ARM966E-S -D__RTX -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork -I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\ST\91x-o .\obj\lcd.o --depend .\obj\lcd.d)
+F (.\LCD.c)(0x551B59D9)(--thumb -c --cpu ARM966E-S -D__RTX -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork -I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\ST\91x-o .\obj\lcd.o --depend .\obj\lcd.d)
 I (C:\Keil\ARM\RV31\INC\RTL.h)(0x5244FBC0)
 I (C:\Keil\ARM\Inc\ST\91x\91x_lib.H)(0x5209AA26)
 I (C:\Keil\ARM\Inc\ST\91x\91x_map.h)(0x5209AA26)
@@ -23,8 +23,8 @@ I (C:\Keil\ARM\Inc\ST\91x\91x_adc.h)(0x5209AA26)
 I (C:\Keil\ARM\Inc\ST\91x\91x_wdg.h)(0x5209AA26)
 I (C:\Keil\ARM\Inc\ST\91x\91x_i2c.h)(0x5209AA26)
 I (C:\Keil\ARM\Inc\ST\91x\91x_mc.h)(0x5209AA26)
-I (LCD.h)(0x551B59F5)
-F (.\IRQ.c)(0x552CB1AF)(--thumb -c --cpu ARM966E-S -D__RTX -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork -I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\ST\91x-o .\obj\irq.o --depend .\obj\irq.d)
+I (LCD.h)(0x551B59D9)
+F (.\IRQ.c)(0x552CB6E8)(--thumb -c --cpu ARM966E-S -D__RTX -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork -I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\ST\91x-o .\obj\irq.o --depend .\obj\irq.d)
 I (C:\Keil\ARM\Inc\ST\91x\91x_lib.h)(0x5209AA26)
 I (C:\Keil\ARM\Inc\ST\91x\91x_map.h)(0x5209AA26)
 I (C:\Keil\ARM\Inc\ST\91x\91x_conf.h)(0x5209AA26)
@@ -48,7 +48,7 @@ I (C:\Keil\ARM\Inc\ST\91x\91x_wdg.h)(0x5209AA26)
 I (C:\Keil\ARM\Inc\ST\91x\91x_i2c.h)(0x5209AA26)
 I (C:\Keil\ARM\Inc\ST\91x\91x_mc.h)(0x5209AA26)
 I (C:\Keil\ARM\RV31\INC\RTL.h)(0x5244FBC0)
-F (.\Dashboard.c)(0x552CB506)(--thumb -c --cpu ARM966E-S -D__RTX -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork -I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\ST\91x-o .\obj\dashboard.o --depend .\obj\dashboard.d)
+F (.\Dashboard.c)(0x552CBD4F)(--thumb -c --cpu ARM966E-S -D__RTX -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork -I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\ST\91x-o .\obj\dashboard.o --depend .\obj\dashboard.d)
 I (C:\Keil\ARM\RV31\INC\RTL.h)(0x5244FBC0)
 I (C:\Keil\ARM\Inc\ST\91x\91x_lib.H)(0x5209AA26)
 I (C:\Keil\ARM\Inc\ST\91x\91x_map.h)(0x5209AA26)
@@ -72,9 +72,9 @@ I (C:\Keil\ARM\Inc\ST\91x\91x_adc.h)(0x5209AA26)
 I (C:\Keil\ARM\Inc\ST\91x\91x_wdg.h)(0x5209AA26)
 I (C:\Keil\ARM\Inc\ST\91x\91x_i2c.h)(0x5209AA26)
 I (C:\Keil\ARM\Inc\ST\91x\91x_mc.h)(0x5209AA26)
-I (LCD.h)(0x551B59F5)
+I (LCD.h)(0x551B59D9)
 I (C:\Keil\ARM\ARMCC\include\stdlib.h)(0x5284661A)
-F (.\RTX_Config.c)(0x551B59F6)(--thumb -c --cpu ARM966E-S -D__RTX -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork -I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\ST\91x-o .\obj\rtx_config.o --depend .\obj\rtx_config.d)
+F (.\RTX_Config.c)(0x551B59D9)(--thumb -c --cpu ARM966E-S -D__RTX -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork -I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\ST\91x-o .\obj\rtx_config.o --depend .\obj\rtx_config.d)
 I (C:\Keil\ARM\RV31\INC\RTL.h)(0x5244FBC0)
 I (C:\Keil\ARM\Inc\ST\91x\91x_lib.H)(0x5209AA26)
 I (C:\Keil\ARM\Inc\ST\91x\91x_map.h)(0x5209AA26)
@@ -99,4 +99,4 @@ I (C:\Keil\ARM\Inc\ST\91x\91x_wdg.h)(0x5209AA26)
 I (C:\Keil\ARM\Inc\ST\91x\91x_i2c.h)(0x5209AA26)
 I (C:\Keil\ARM\Inc\ST\91x\91x_mc.h)(0x5209AA26)
 I (C:\Keil\ARM\RV31\INC\RTX_lib.c)(0x51C7BB06)
-F (.\STR91x.s)(0x551B59F6)(--cpu ARM966E-S --pd "__RTX SETA 1" --pd "__EVAL SETA 1" -g --16 --apcs=interwork --pd "__MICROLIB SETA 1"-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\ST\91x-o .\obj\str91x.o --depend .\obj\str91x.d)
+F (.\STR91x.s)(0x551B59D9)(--cpu ARM966E-S --pd "__RTX SETA 1" --pd "__EVAL SETA 1" -g --16 --apcs=interwork --pd "__MICROLIB SETA 1"-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\ST\91x-o .\obj\str91x.o --depend .\obj\str91x.d)
