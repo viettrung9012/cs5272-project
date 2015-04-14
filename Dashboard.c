@@ -19,6 +19,7 @@ extern unsigned char AD_in_progress;      /* AD conversion in progress flag  */
 short potentiometer;
 short slidesensor;
 short forcesensor;
+extern short SlideSensor;
 
 unsigned char A0,A1; //A0 - Button 3.5, A1 - Button 3.6
 unsigned char B0 = 0,B1 = 0,B2 = 0,B3 = 0,B4 = 0,B5 = 0,B6 = 0,B7 = 0; //B0-B7 represent LED's 0 through 7
@@ -27,9 +28,9 @@ extern OS_MBX p_box;
 extern OS_MBX s_box;
 extern OS_MBX f_box;
 
-float BRAKE_MULTIPLIER = 0.10f;
-float FRICTION_MULTIPLIER = 0.1f;
-float MIN_FRICTION = 0.5f;
+float BRAKE_MULTIPLIER = 0.07f;
+float FRICTION_MULTIPLIER = 0.09f;
+float MIN_FRICTION = 1.0f;
 float ACC_MULTIPLIER = 0.03f;
 float speed = 0;
 int MAX_SPEED = 200;
@@ -78,15 +79,15 @@ void mbx_read(void) {
 	void *p_msg, *s_msg, *f_msg;
 	
 	os_mbx_wait(&p_box, &p_msg, 0xffff);
-	potentiometer = *(short *) p_msg;
-	free(p_msg);
-	
 	os_mbx_wait(&s_box, &s_msg, 0xffff);
-	slidesensor = *(short *) s_msg;
-	free(s_msg);
-	
 	os_mbx_wait(&f_box, &f_msg, 0xffff);
+	
+	potentiometer = *(short *) p_msg;
+	slidesensor = *(short *) s_msg;
 	forcesensor = *(short *) f_msg;
+	
+	free(p_msg);
+	free(s_msg);
 	free(f_msg);
 	
 }
@@ -97,8 +98,8 @@ void write_LCD(){
 	
 	mbx_read();
 	os_mut_wait(&LCD_Mutex, 0xFFFF);
-	sprintf(ss,"%d",(int)(speed));
-	sprintf(pm,"%d",potentiometer);
+	sprintf(ss,"%d",(int)(speed));//speed
+	sprintf(pm,"%d",potentiometer);//potentiometer
 	LCD_on(); // Turn on LCD
 	LCD_cls();
 	LCD_puts("Speed: ");
@@ -334,7 +335,6 @@ static void update_speed(){
 	speed += (int)acc;
 	if(speed>MAX_SPEED) speed = MAX_SPEED;
 	if(speed<0) speed = 0;
-	speed = forcesensor;
 }
 static void update_brightness(){
 	headlight_brightness = (MAX_POTENTIOMETER - potentiometer) * 5 / MAX_POTENTIOMETER;
