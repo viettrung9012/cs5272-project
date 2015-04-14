@@ -27,3 +27,8 @@
 *.i*86
 *.x86_64
 *.hex
+Obj/Dashboard.build_log.htm
+Obj/Dashboard.htm
+*.axf
+Obj/Dashboard.axf
+Lst/Dashboard.map

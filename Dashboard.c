@@ -16,12 +16,16 @@
 
 extern __irq void ADC_IRQ_Handler (void); /* ADC  interrupt routine           */
 extern unsigned char AD_in_progress;      /* AD conversion in progress flag  */
-extern short Potentiometer;
-extern short SlideSensor;
-extern short ForceSensor;
+short potentiometer;
+short slidesensor;
+short forcesensor;
 
 unsigned char A0,A1; //A0 - Button 3.5, A1 - Button 3.6
 unsigned char B0 = 0,B1 = 0,B2 = 0,B3 = 0,B4 = 0,B5 = 0,B6 = 0,B7 = 0; //B0-B7 represent LED's 0 through 7
+
+extern OS_MBX p_box;
+extern OS_MBX s_box;
+extern OS_MBX f_box;
 
 float BRAKE_MULTIPLIER = 2.0f;
 float FRICTION_MULTIPLIER = 0.20f;
@@ -71,13 +75,31 @@ unsigned char SENSOR = 0;
 
 OS_MUT LCD_Mutex;
 
+void mbx_read(void) {
+	void *p_msg, *s_msg, *f_msg;
+	
+	os_mbx_wait(&p_box, &p_msg, 0xffff);
+	potentiometer = *(short *) p_msg;
+	free(p_msg);
+	
+	os_mbx_wait(&s_box, &s_msg, 0xffff);
+	slidesensor = *(short *) s_msg;
+	free(s_msg);
+	
+	os_mbx_wait(&f_box, &f_msg, 0xffff);
+	forcesensor = *(short *) f_msg;
+	free(f_msg);
+	
+}
+
 void write_LCD(){
 	char ss[5];
 	char pm[5];
 	
+	mbx_read();
 	os_mut_wait(&LCD_Mutex, 0xFFFF);
-	sprintf(ss,"%d",(int)(speed*SPEED_MULTIPLIER));
-	sprintf(pm,"%d",Potentiometer);
+	sprintf(ss,"%d",(int)(speed));
+	sprintf(pm,"%d",potentiometer);
 	LCD_on(); // Turn on LCD
 	LCD_cls();
 	LCD_puts("Speed: ");
@@ -190,7 +212,7 @@ int TickFct_Sensor(int state) {
 		}
 		case CLOSE_OFF:{ // Door close, light off
 			if (doorStateChanged && isDoorOpen) { // Open door
-				if (Potentiometer * MAX_BRIGHTNESS / MAX_POTENTIOMETER <= DARKNESS_THRESHOLD) {// Outside is dark
+				if (potentiometer * MAX_BRIGHTNESS / MAX_POTENTIOMETER <= DARKNESS_THRESHOLD) {// Outside is dark
 					internalLightOn();
 								state = OPEN_ON; // Door open, light on
 					counter = 0; // Start counter
@@ -309,14 +331,14 @@ static void update_speed(){
 	double friction = speed * FRICTION_MULTIPLIER;
 	
 	if(friction<MIN_FRICTION) friction = MIN_FRICTION;
-	acc = (((isEngineOn)? SlideSensor : 0) - ForceSensor * BRAKE_MULTIPLIER - friction) * ACC_MULTIPLIER;
+	acc = (((isEngineOn)? slidesensor : 0) - forcesensor * BRAKE_MULTIPLIER - friction) * ACC_MULTIPLIER;
 	speed += (int)acc;
 	if(speed>MAX_SPEED) speed = MAX_SPEED;
 	if(speed<0) speed = 0;
-	speed =SlideSensor;
+	speed =slidesensor;
 }
 static void update_brightness(){
-	headlight_brightness = (MAX_POTENTIOMETER - Potentiometer) * 5 / MAX_POTENTIOMETER;
+	headlight_brightness = (MAX_POTENTIOMETER - potentiometer) * 5 / MAX_POTENTIOMETER;
 	if(isInternalLightDimming && ++internalLightDimCounter % DIM_DURATION_CYCLES == 0){ //Every 0.4 seconds
 		internal_brightness --;
 		if(internal_brightness == 0) isInternalLightDimming = 0; 
@@ -416,8 +438,9 @@ __task void ADC_Con(void){
 		for(;;){ 
 		os_itv_wait();
 		/* Do actions below */
-		start_ADC();
-		write_LCD();
+			start_ADC();
+			//mbx_read();
+			write_LCD();
 		}
 }	 // End ADC_Con(void)
 
@@ -429,7 +452,7 @@ __task void init (void) {
 
   unsigned int n = 0;
   		  
-	/* Set up Potentiometer and Light sensor*/                                                              
+	/* Set up potentiometer and Light sensor*/                                                              
   
   SCU->GPIOIN[4]  |= 0x07;                /* P4.0, P4.1 and P4.2 input  - mode 0             */
   SCU->GPIOOUT[4] &= 0xFFC0;              /* P4.0 output - mode 0             */
