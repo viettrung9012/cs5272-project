@@ -51,10 +51,10 @@ unsigned short DIM_DURATION_CYCLES = 2; // 2 (0.4s) SENSOR_DELAY*DIM_DURATION_CY
 unsigned short CAR_OPEN_ON_LIGHT_CYCLES = 100; // 100 (20s) SENSOR_DELAY*CAR_OPEN_ON_LIGHT_CYCLES = duration until lights turn off
 unsigned short CAR_CLOSE_ON_CYCLES = 50; // 50 (10s) SENSOR_DELAY*CAR_CLOSE_ON_CYCLES = duration until lights dim off
 
-unsigned short ALARM_PRIORITY = 1;
-unsigned short PWM_PRIORITY = 1;
-unsigned short LCD_STATE_PRIORITY = 1;
-unsigned short SENSOR_PRIORITY = 0;
+unsigned short LCD_STATE_PRIORITY = 4;
+unsigned short ALARM_PRIORITY = 3;
+unsigned short PWM_PRIORITY = 2;
+unsigned short SENSOR_PRIORITY = 1;
 unsigned short ACD_PRIORITY = 0;
 
 unsigned short headlight_brightness,internal_brightness; // 0 to MAX_BRIGHTNESS
@@ -142,14 +142,6 @@ void start_ADC ( )
         ADC->CR |= 0x0423;                  /* Set STR bit (Start Conversion)     */
     }
 	//Now the interrupt will be called when conversion ends
-}
-
-void read_input()
-{
-	//BUTTON_3_5:
-	A0 = !(GPIO3->DR[0x080]>>5); // Returns 1 when pressed and 0 when released
-	//BUTTON_3_6:
-	A1 = !(GPIO3->DR[0x100]>>6); // Returns 1 when pressed and 0 when released
 }
 
 //Function to write to led
@@ -417,7 +409,6 @@ __task void TASK_SENSOR(void) {
   os_itv_set(taskperiod);
 	
 	while(1){
-		read_input();
 		read_buttons();
 		update_speed();
 		update_brightness();
